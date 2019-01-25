@@ -4327,8 +4327,18 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Model$Chat = {$: 'Chat'};
-var author$project$Model$Home = {$: 'Home'};
+var author$project$Main$ClickedLink = function (a) {
+	return {$: 'ClickedLink', a: a};
+};
+var author$project$Main$UrlChange = function (a) {
+	return {$: 'UrlChange', a: a};
+};
+var author$project$Main$Home = {$: 'Home'};
+var author$project$Main$NavMsg = function (a) {
+	return {$: 'NavMsg', a: a};
+};
+var author$project$Main$NotFound = {$: 'NotFound'};
+var author$project$Main$Chat = {$: 'Chat'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4611,10 +4621,10 @@ var elm$url$Url$Parser$top = elm$url$Url$Parser$Parser(
 var author$project$Main$routeParser = elm$url$Url$Parser$oneOf(
 	_List_fromArray(
 		[
-			A2(elm$url$Url$Parser$map, author$project$Model$Home, elm$url$Url$Parser$top),
+			A2(elm$url$Url$Parser$map, author$project$Main$Home, elm$url$Url$Parser$top),
 			A2(
 			elm$url$Url$Parser$map,
-			author$project$Model$Chat,
+			author$project$Main$Chat,
 			elm$url$Url$Parser$s('chat'))
 		]));
 var elm$core$Basics$apR = F2(
@@ -5281,7 +5291,6 @@ var author$project$Main$decode = function (url) {
 				path: A2(elm$core$Maybe$withDefault, '', url.fragment)
 			}));
 };
-var author$project$Model$NotFound = {$: 'NotFound'};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -5643,7 +5652,7 @@ var author$project$Main$urlUpdate = F2(
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{page: author$project$Model$NotFound}),
+					{page: author$project$Main$NotFound}),
 				elm$core$Platform$Cmd$none);
 		} else {
 			var route = _n0.a;
@@ -5654,9 +5663,6 @@ var author$project$Main$urlUpdate = F2(
 				elm$core$Platform$Cmd$none);
 		}
 	});
-var author$project$Model$NavMsg = function (a) {
-	return {$: 'NavMsg', a: a};
-};
 var rundis$elm_bootstrap$Bootstrap$Navbar$Hidden = {$: 'Hidden'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$State = function (a) {
 	return {$: 'State', a: a};
@@ -5937,13 +5943,13 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$initialState = function (toMsg) {
 };
 var author$project$Main$init = F3(
 	function (flags, url, key) {
-		var _n0 = rundis$elm_bootstrap$Bootstrap$Navbar$initialState(author$project$Model$NavMsg);
+		var _n0 = rundis$elm_bootstrap$Bootstrap$Navbar$initialState(author$project$Main$NavMsg);
 		var navState = _n0.a;
 		var navCmd = _n0.b;
 		var _n1 = A2(
 			author$project$Main$urlUpdate,
 			url,
-			{navKey: key, navState: navState, page: author$project$Model$Home});
+			{navKey: key, navState: navState, page: author$project$Main$Home});
 		var model = _n1.a;
 		var urlCmd = _n1.b;
 		return _Utils_Tuple2(
@@ -6537,7 +6543,7 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions = F2(
 				]));
 	});
 var author$project$Main$subscriptions = function (model) {
-	return A2(rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions, model.navState, author$project$Model$NavMsg);
+	return A2(rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions, model.navState, author$project$Main$NavMsg);
 };
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
@@ -7364,7 +7370,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Textarea$view = function (_n0) {
 		_List_Nil);
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea = A2(elm$core$Basics$composeL, rundis$elm_bootstrap$Bootstrap$Form$Textarea$view, rundis$elm_bootstrap$Bootstrap$Form$Textarea$create);
-var author$project$Chat$page = function (model) {
+var author$project$Main$pageChat = function (model) {
 	return _List_fromArray(
 		[
 			A2(
@@ -8445,7 +8451,7 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
-var author$project$Home$page = function (model) {
+var author$project$Main$pageHome = function (model) {
 	return _List_fromArray(
 		[
 			A2(
@@ -8571,9 +8577,9 @@ var author$project$Main$mainContent = function (model) {
 			var _n0 = model.page;
 			switch (_n0.$) {
 				case 'Home':
-					return author$project$Home$page(model);
+					return author$project$Main$pageHome(model);
 				case 'Chat':
-					return author$project$Chat$page(model);
+					return author$project$Main$pageChat(model);
 				default:
 					return author$project$Main$pageNotFound;
 			}
@@ -8594,15 +8600,9 @@ var author$project$Main$view = function (model) {
 		title: 'Elm Bootstrap'
 	};
 };
-var author$project$Model$ClickedLink = function (a) {
-	return {$: 'ClickedLink', a: a};
-};
-var author$project$Model$UrlChange = function (a) {
-	return {$: 'UrlChange', a: a};
-};
 var elm$browser$Browser$application = _Browser_application;
 var author$project$Main$main = elm$browser$Browser$application(
-	{init: author$project$Main$init, onUrlChange: author$project$Model$UrlChange, onUrlRequest: author$project$Model$ClickedLink, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
+	{init: author$project$Main$init, onUrlChange: author$project$Main$UrlChange, onUrlRequest: author$project$Main$ClickedLink, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	elm$json$Json$Decode$succeed(
 		{}))(0)}});}(this));
