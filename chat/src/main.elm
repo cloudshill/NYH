@@ -21,20 +21,14 @@ import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 
+import Home
+import Chat
+import Model exposing(Model,Page(..),Msg(..))
+
 
 type alias Flags =
     {}
 
-type alias Model =
-    { navKey : Navigation.Key
-    , page : Page
-    , navState : Navbar.State
-    }
-
-type Page
-    = Home
-    | Chat
-    | NotFound
 
 
 main : Program Flags Model Msg
@@ -58,12 +52,6 @@ init flags url key =
             urlUpdate url { navKey = key, navState = navState, page = Home }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
-
-
-type Msg
-    = UrlChange Url
-    | ClickedLink UrlRequest
-    | NavMsg Navbar.State
 
 
 subscriptions : Model -> Sub Msg
@@ -136,35 +124,14 @@ mainContent model =
     Grid.container [] <|
         case model.page of
             Home ->
-                pageHome model
+                Home.page model
 
             Chat ->
-                pageChat model
+                Chat.page model
 
             NotFound ->
                 pageNotFound
 
-
-pageHome : Model -> List (Html Msg)
-pageHome model =
-    [ h1 [] [ text "Log In" ]
-    , Grid.row []
-        [ Grid.col []
-            [ Form.form []
-                [ Form.group []
-                    [ Form.label [for "myemail"] [ text "Email address "]
-                    , Input.email [ Input.id "myemail" ]
-                    , Form.help [] [ text "We'll never share your email with anyone else." ]
-                    ]
-                , Form.group []
-                    [ Form.label [for "mypwd"] [ text "Password "]
-                    , Input.password [ Input.id "mypwd" ]
-                    ]
-                , a [href "#chat"] [Button.button [][text "Submit"]]
-                ]
-            ]
-        ]
-    ]
 
 
 pageChat : Model -> List (Html Msg)
