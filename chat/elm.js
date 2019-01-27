@@ -4617,10 +4617,23 @@ var author$project$Main$routeParser = elm$url$Url$Parser$oneOf(
 			author$project$Model$Chat,
 			elm$url$Url$Parser$s('chat'))
 		]));
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
 	while (true) {
@@ -5257,7 +5270,17 @@ var elm$url$Url$Parser$parse = F2(
 					url.fragment,
 					elm$core$Basics$identity)));
 	});
-var author$project$Main$decode = elm$url$Url$Parser$parse(author$project$Main$routeParser);
+var author$project$Main$decode = function (url) {
+	return A2(
+		elm$url$Url$Parser$parse,
+		author$project$Main$routeParser,
+		_Utils_update(
+			url,
+			{
+				fragment: elm$core$Maybe$Nothing,
+				path: A2(elm$core$Maybe$withDefault, '', url.fragment)
+			}));
+};
 var author$project$Model$NoOp = {$: 'NoOp'};
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
@@ -5291,10 +5314,6 @@ var elm$core$Task$Perform = function (a) {
 };
 var elm$core$Task$succeed = _Scheduler_succeed;
 var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
 var elm$core$Task$andThen = _Scheduler_andThen;
 var elm$core$Task$map = F2(
 	function (func, taskA) {
@@ -6868,15 +6887,6 @@ var elm$core$Maybe$map = F2(
 				f(value));
 		} else {
 			return elm$core$Maybe$Nothing;
-		}
-	});
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
 		}
 	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignDirOption = function (dir) {
@@ -9424,7 +9434,7 @@ var author$project$Main$menu = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$href('/')
+							elm$html$Html$Attributes$href('#')
 						]),
 					_List_fromArray(
 						[
@@ -9434,7 +9444,7 @@ var author$project$Main$menu = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$href('chat')
+							elm$html$Html$Attributes$href('#chat')
 						]),
 					_List_fromArray(
 						[
@@ -9445,7 +9455,7 @@ var author$project$Main$menu = function (model) {
 				rundis$elm_bootstrap$Bootstrap$Navbar$brand,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$href('/')
+						elm$html$Html$Attributes$href('#')
 					]),
 				_List_Nil,
 				rundis$elm_bootstrap$Bootstrap$Navbar$container(

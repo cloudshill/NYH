@@ -104,9 +104,9 @@ resetViewport =
   Task.perform (\_ -> NoOp) (Dom.setViewport 0 0)
 
 decode : Url -> Maybe Page
-decode =
-    UrlParser.parse routeParser
-
+decode url =
+    { url | path = Maybe.withDefault "" url.fragment, fragment = Nothing }
+    |> UrlParser.parse routeParser
 
 routeParser : Parser (Page -> a) a
 routeParser =
@@ -140,10 +140,10 @@ menu model =
     Navbar.config NavMsg
         |> Navbar.withAnimation
         |> Navbar.container
-        |> Navbar.brand [ href "/" ] []
+        |> Navbar.brand [ href "#" ] []
         |> Navbar.items
-            [ Navbar.itemLink [ href "/" ] [ text "Home" ]
-            , Navbar.itemLink [ href "chat" ] [ text "Chat" ]
+            [ Navbar.itemLink [ href "#" ] [ text "Home" ]
+            , Navbar.itemLink [ href "#chat" ] [ text "Chat" ]
             ]
         |> Navbar.view model.navState
 

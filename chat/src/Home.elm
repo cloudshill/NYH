@@ -39,7 +39,7 @@ page model =
                     [ Form.label [for "mypwd"] [ text "Password "]
                     , Input.password [ Input.id "mypwd" ]
                     ]
-                , a [href "chat"] [Button.button [][text "Submit"]]
+                , a [href "#chat"] [Button.button [][text "Submit"]]
                 ]
             ]
         ]
