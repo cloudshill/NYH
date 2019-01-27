@@ -1182,6 +1182,197 @@ function _Url_percentDecode(string)
 }
 
 
+// TASKS
+
+function _Scheduler_succeed(value)
+{
+	return {
+		$: 0,
+		a: value
+	};
+}
+
+function _Scheduler_fail(error)
+{
+	return {
+		$: 1,
+		a: error
+	};
+}
+
+function _Scheduler_binding(callback)
+{
+	return {
+		$: 2,
+		b: callback,
+		c: null
+	};
+}
+
+var _Scheduler_andThen = F2(function(callback, task)
+{
+	return {
+		$: 3,
+		b: callback,
+		d: task
+	};
+});
+
+var _Scheduler_onError = F2(function(callback, task)
+{
+	return {
+		$: 4,
+		b: callback,
+		d: task
+	};
+});
+
+function _Scheduler_receive(callback)
+{
+	return {
+		$: 5,
+		b: callback
+	};
+}
+
+
+// PROCESSES
+
+var _Scheduler_guid = 0;
+
+function _Scheduler_rawSpawn(task)
+{
+	var proc = {
+		$: 0,
+		e: _Scheduler_guid++,
+		f: task,
+		g: null,
+		h: []
+	};
+
+	_Scheduler_enqueue(proc);
+
+	return proc;
+}
+
+function _Scheduler_spawn(task)
+{
+	return _Scheduler_binding(function(callback) {
+		callback(_Scheduler_succeed(_Scheduler_rawSpawn(task)));
+	});
+}
+
+function _Scheduler_rawSend(proc, msg)
+{
+	proc.h.push(msg);
+	_Scheduler_enqueue(proc);
+}
+
+var _Scheduler_send = F2(function(proc, msg)
+{
+	return _Scheduler_binding(function(callback) {
+		_Scheduler_rawSend(proc, msg);
+		callback(_Scheduler_succeed(_Utils_Tuple0));
+	});
+});
+
+function _Scheduler_kill(proc)
+{
+	return _Scheduler_binding(function(callback) {
+		var task = proc.f;
+		if (task.$ === 2 && task.c)
+		{
+			task.c();
+		}
+
+		proc.f = null;
+
+		callback(_Scheduler_succeed(_Utils_Tuple0));
+	});
+}
+
+
+/* STEP PROCESSES
+
+type alias Process =
+  { $ : tag
+  , id : unique_id
+  , root : Task
+  , stack : null | { $: SUCCEED | FAIL, a: callback, b: stack }
+  , mailbox : [msg]
+  }
+
+*/
+
+
+var _Scheduler_working = false;
+var _Scheduler_queue = [];
+
+
+function _Scheduler_enqueue(proc)
+{
+	_Scheduler_queue.push(proc);
+	if (_Scheduler_working)
+	{
+		return;
+	}
+	_Scheduler_working = true;
+	while (proc = _Scheduler_queue.shift())
+	{
+		_Scheduler_step(proc);
+	}
+	_Scheduler_working = false;
+}
+
+
+function _Scheduler_step(proc)
+{
+	while (proc.f)
+	{
+		var rootTag = proc.f.$;
+		if (rootTag === 0 || rootTag === 1)
+		{
+			while (proc.g && proc.g.$ !== rootTag)
+			{
+				proc.g = proc.g.i;
+			}
+			if (!proc.g)
+			{
+				return;
+			}
+			proc.f = proc.g.b(proc.f.a);
+			proc.g = proc.g.i;
+		}
+		else if (rootTag === 2)
+		{
+			proc.f.c = proc.f.b(function(newRoot) {
+				proc.f = newRoot;
+				_Scheduler_enqueue(proc);
+			});
+			return;
+		}
+		else if (rootTag === 5)
+		{
+			if (proc.h.length === 0)
+			{
+				return;
+			}
+			proc.f = proc.f.b(proc.h.shift());
+		}
+		else // if (rootTag === 3 || rootTag === 4)
+		{
+			proc.g = {
+				$: rootTag === 3 ? 0 : 1,
+				b: proc.f.b,
+				i: proc.g
+			};
+			proc.f = proc.f.d;
+		}
+	}
+}
+
+
+
 function _Char_toCode(char)
 {
 	var code = char.charCodeAt(0);
@@ -1658,197 +1849,6 @@ function _Json_addEntry(func)
 }
 
 var _Json_encodeNull = _Json_wrap(null);
-
-
-
-// TASKS
-
-function _Scheduler_succeed(value)
-{
-	return {
-		$: 0,
-		a: value
-	};
-}
-
-function _Scheduler_fail(error)
-{
-	return {
-		$: 1,
-		a: error
-	};
-}
-
-function _Scheduler_binding(callback)
-{
-	return {
-		$: 2,
-		b: callback,
-		c: null
-	};
-}
-
-var _Scheduler_andThen = F2(function(callback, task)
-{
-	return {
-		$: 3,
-		b: callback,
-		d: task
-	};
-});
-
-var _Scheduler_onError = F2(function(callback, task)
-{
-	return {
-		$: 4,
-		b: callback,
-		d: task
-	};
-});
-
-function _Scheduler_receive(callback)
-{
-	return {
-		$: 5,
-		b: callback
-	};
-}
-
-
-// PROCESSES
-
-var _Scheduler_guid = 0;
-
-function _Scheduler_rawSpawn(task)
-{
-	var proc = {
-		$: 0,
-		e: _Scheduler_guid++,
-		f: task,
-		g: null,
-		h: []
-	};
-
-	_Scheduler_enqueue(proc);
-
-	return proc;
-}
-
-function _Scheduler_spawn(task)
-{
-	return _Scheduler_binding(function(callback) {
-		callback(_Scheduler_succeed(_Scheduler_rawSpawn(task)));
-	});
-}
-
-function _Scheduler_rawSend(proc, msg)
-{
-	proc.h.push(msg);
-	_Scheduler_enqueue(proc);
-}
-
-var _Scheduler_send = F2(function(proc, msg)
-{
-	return _Scheduler_binding(function(callback) {
-		_Scheduler_rawSend(proc, msg);
-		callback(_Scheduler_succeed(_Utils_Tuple0));
-	});
-});
-
-function _Scheduler_kill(proc)
-{
-	return _Scheduler_binding(function(callback) {
-		var task = proc.f;
-		if (task.$ === 2 && task.c)
-		{
-			task.c();
-		}
-
-		proc.f = null;
-
-		callback(_Scheduler_succeed(_Utils_Tuple0));
-	});
-}
-
-
-/* STEP PROCESSES
-
-type alias Process =
-  { $ : tag
-  , id : unique_id
-  , root : Task
-  , stack : null | { $: SUCCEED | FAIL, a: callback, b: stack }
-  , mailbox : [msg]
-  }
-
-*/
-
-
-var _Scheduler_working = false;
-var _Scheduler_queue = [];
-
-
-function _Scheduler_enqueue(proc)
-{
-	_Scheduler_queue.push(proc);
-	if (_Scheduler_working)
-	{
-		return;
-	}
-	_Scheduler_working = true;
-	while (proc = _Scheduler_queue.shift())
-	{
-		_Scheduler_step(proc);
-	}
-	_Scheduler_working = false;
-}
-
-
-function _Scheduler_step(proc)
-{
-	while (proc.f)
-	{
-		var rootTag = proc.f.$;
-		if (rootTag === 0 || rootTag === 1)
-		{
-			while (proc.g && proc.g.$ !== rootTag)
-			{
-				proc.g = proc.g.i;
-			}
-			if (!proc.g)
-			{
-				return;
-			}
-			proc.f = proc.g.b(proc.f.a);
-			proc.g = proc.g.i;
-		}
-		else if (rootTag === 2)
-		{
-			proc.f.c = proc.f.b(function(newRoot) {
-				proc.f = newRoot;
-				_Scheduler_enqueue(proc);
-			});
-			return;
-		}
-		else if (rootTag === 5)
-		{
-			if (proc.h.length === 0)
-			{
-				return;
-			}
-			proc.f = proc.f.b(proc.h.shift());
-		}
-		else // if (rootTag === 3 || rootTag === 4)
-		{
-			proc.g = {
-				$: rootTag === 3 ? 0 : 1,
-				b: proc.f.b,
-				i: proc.g
-			};
-			proc.f = proc.f.d;
-		}
-	}
-}
 
 
 
@@ -4327,18 +4327,8 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$ClickedLink = function (a) {
-	return {$: 'ClickedLink', a: a};
-};
-var author$project$Main$UrlChange = function (a) {
-	return {$: 'UrlChange', a: a};
-};
-var author$project$Main$Home = {$: 'Home'};
-var author$project$Main$NavMsg = function (a) {
-	return {$: 'NavMsg', a: a};
-};
-var author$project$Main$NotFound = {$: 'NotFound'};
-var author$project$Main$Chat = {$: 'Chat'};
+var author$project$Model$Chat = {$: 'Chat'};
+var author$project$Model$Home = {$: 'Home'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4621,29 +4611,16 @@ var elm$url$Url$Parser$top = elm$url$Url$Parser$Parser(
 var author$project$Main$routeParser = elm$url$Url$Parser$oneOf(
 	_List_fromArray(
 		[
-			A2(elm$url$Url$Parser$map, author$project$Main$Home, elm$url$Url$Parser$top),
+			A2(elm$url$Url$Parser$map, author$project$Model$Home, elm$url$Url$Parser$top),
 			A2(
 			elm$url$Url$Parser$map,
-			author$project$Main$Chat,
+			author$project$Model$Chat,
 			elm$url$Url$Parser$s('chat'))
 		]));
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
 	while (true) {
@@ -5280,16 +5257,25 @@ var elm$url$Url$Parser$parse = F2(
 					url.fragment,
 					elm$core$Basics$identity)));
 	});
-var author$project$Main$decode = function (url) {
-	return A2(
-		elm$url$Url$Parser$parse,
-		author$project$Main$routeParser,
-		_Utils_update(
-			url,
-			{
-				fragment: elm$core$Maybe$Nothing,
-				path: A2(elm$core$Maybe$withDefault, '', url.fragment)
-			}));
+var author$project$Main$decode = elm$url$Url$Parser$parse(author$project$Main$routeParser);
+var author$project$Model$NoOp = {$: 'NoOp'};
+var elm$browser$Browser$External = function (a) {
+	return {$: 'External', a: a};
+};
+var elm$browser$Browser$Internal = function (a) {
+	return {$: 'Internal', a: a};
+};
+var elm$browser$Browser$Dom$NotFound = function (a) {
+	return {$: 'NotFound', a: a};
+};
+var elm$core$Basics$never = function (_n0) {
+	never:
+	while (true) {
+		var nvr = _n0.a;
+		var $temp$_n0 = nvr;
+		_n0 = $temp$_n0;
+		continue never;
+	}
 };
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
@@ -5299,6 +5285,48 @@ var elm$core$Result$isOk = function (result) {
 	} else {
 		return false;
 	}
+};
+var elm$core$Task$Perform = function (a) {
+	return {$: 'Perform', a: a};
+};
+var elm$core$Task$succeed = _Scheduler_succeed;
+var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var elm$core$Task$andThen = _Scheduler_andThen;
+var elm$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return elm$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var elm$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return A2(
+					elm$core$Task$andThen,
+					function (b) {
+						return elm$core$Task$succeed(
+							A2(func, a, b));
+					},
+					taskB);
+			},
+			taskA);
+	});
+var elm$core$Task$sequence = function (tasks) {
+	return A3(
+		elm$core$List$foldr,
+		elm$core$Task$map2(elm$core$List$cons),
+		elm$core$Task$succeed(_List_Nil),
+		tasks);
 };
 var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
@@ -5643,86 +5671,6 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 			}
 		}
 	});
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Main$urlUpdate = F2(
-	function (url, model) {
-		var _n0 = author$project$Main$decode(url);
-		if (_n0.$ === 'Nothing') {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{page: author$project$Main$NotFound}),
-				elm$core$Platform$Cmd$none);
-		} else {
-			var route = _n0.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{page: route}),
-				elm$core$Platform$Cmd$none);
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Navbar$Hidden = {$: 'Hidden'};
-var rundis$elm_bootstrap$Bootstrap$Navbar$State = function (a) {
-	return {$: 'State', a: a};
-};
-var elm$browser$Browser$External = function (a) {
-	return {$: 'External', a: a};
-};
-var elm$browser$Browser$Internal = function (a) {
-	return {$: 'Internal', a: a};
-};
-var elm$browser$Browser$Dom$NotFound = function (a) {
-	return {$: 'NotFound', a: a};
-};
-var elm$core$Basics$never = function (_n0) {
-	never:
-	while (true) {
-		var nvr = _n0.a;
-		var $temp$_n0 = nvr;
-		_n0 = $temp$_n0;
-		continue never;
-	}
-};
-var elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
-};
-var elm$core$Task$succeed = _Scheduler_succeed;
-var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$Task$andThen = _Scheduler_andThen;
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$map2 = F3(
-	function (func, taskA, taskB) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return A2(
-					elm$core$Task$andThen,
-					function (b) {
-						return elm$core$Task$succeed(
-							A2(func, a, b));
-					},
-					taskB);
-			},
-			taskA);
-	});
-var elm$core$Task$sequence = function (tasks) {
-	return A3(
-		elm$core$List$foldr,
-		elm$core$Task$map2(elm$core$List$cons),
-		elm$core$Task$succeed(_List_Nil),
-		tasks);
-};
 var elm$core$Platform$sendToApp = _Platform_sendToApp;
 var elm$core$Task$spawnCmd = F2(
 	function (router, _n0) {
@@ -5908,6 +5856,40 @@ var elm$url$Url$fromString = function (str) {
 		elm$url$Url$Https,
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
+var elm$browser$Browser$Dom$setViewport = _Browser_setViewport;
+var author$project$Main$resetViewport = A2(
+	elm$core$Task$perform,
+	function (_n0) {
+		return author$project$Model$NoOp;
+	},
+	A2(elm$browser$Browser$Dom$setViewport, 0, 0));
+var author$project$Model$NotFound = {$: 'NotFound'};
+var author$project$Main$urlUpdate = F2(
+	function (url, model) {
+		var _n0 = author$project$Main$decode(url);
+		if (_n0.$ === 'Nothing') {
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{page: author$project$Model$NotFound}),
+				author$project$Main$resetViewport);
+		} else {
+			var route = _n0.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{page: route}),
+				author$project$Main$resetViewport);
+		}
+	});
+var author$project$Model$NavMsg = function (a) {
+	return {$: 'NavMsg', a: a};
+};
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var rundis$elm_bootstrap$Bootstrap$Navbar$Hidden = {$: 'Hidden'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$State = function (a) {
+	return {$: 'State', a: a};
+};
 var elm$browser$Browser$Dom$getViewport = _Browser_withWindow(_Browser_getViewport);
 var rundis$elm_bootstrap$Bootstrap$Navbar$mapState = F2(
 	function (mapper, _n0) {
@@ -5943,13 +5925,13 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$initialState = function (toMsg) {
 };
 var author$project$Main$init = F3(
 	function (flags, url, key) {
-		var _n0 = rundis$elm_bootstrap$Bootstrap$Navbar$initialState(author$project$Main$NavMsg);
+		var _n0 = rundis$elm_bootstrap$Bootstrap$Navbar$initialState(author$project$Model$NavMsg);
 		var navState = _n0.a;
 		var navCmd = _n0.b;
 		var _n1 = A2(
 			author$project$Main$urlUpdate,
 			url,
-			{navKey: key, navState: navState, page: author$project$Main$Home});
+			{navKey: key, navState: navState, page: author$project$Model$Home});
 		var model = _n1.a;
 		var urlCmd = _n1.b;
 		return _Utils_Tuple2(
@@ -6543,10 +6525,11 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions = F2(
 				]));
 	});
 var author$project$Main$subscriptions = function (model) {
-	return A2(rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions, model.navState, author$project$Main$NavMsg);
+	return A2(rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions, model.navState, author$project$Model$NavMsg);
 };
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -6613,13 +6596,15 @@ var author$project$Main$update = F2(
 			case 'UrlChange':
 				var url = msg.a;
 				return A2(author$project$Main$urlUpdate, url, model);
-			default:
+			case 'NavMsg':
 				var state = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{navState: state}),
 					elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 		}
 	});
 var elm$html$Html$h2 = _VirtualDom_node('h2');
@@ -6883,6 +6868,15 @@ var elm$core$Maybe$map = F2(
 				f(value));
 		} else {
 			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
 		}
 	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignDirOption = function (dir) {
@@ -7370,7 +7364,7 @@ var rundis$elm_bootstrap$Bootstrap$Form$Textarea$view = function (_n0) {
 		_List_Nil);
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea = A2(elm$core$Basics$composeL, rundis$elm_bootstrap$Bootstrap$Form$Textarea$view, rundis$elm_bootstrap$Bootstrap$Form$Textarea$create);
-var author$project$Main$pageChat = function (model) {
+var author$project$Chat$page = function (model) {
 	return _List_fromArray(
 		[
 			A2(
@@ -7404,7 +7398,7 @@ var author$project$Main$pageChat = function (model) {
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('Me')
+									elm$html$Html$text('Hi')
 								]))
 						]),
 					rundis$elm_bootstrap$Bootstrap$Card$config(_List_Nil)))),
@@ -8451,7 +8445,7 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
-var author$project$Main$pageHome = function (model) {
+var author$project$Home$page = function (model) {
 	return _List_fromArray(
 		[
 			A2(
@@ -8485,16 +8479,16 @@ var author$project$Main$pageHome = function (model) {
 											rundis$elm_bootstrap$Bootstrap$Form$label,
 											_List_fromArray(
 												[
-													elm$html$Html$Attributes$for('myemail')
+													elm$html$Html$Attributes$for('myid')
 												]),
 											_List_fromArray(
 												[
-													elm$html$Html$text('Email address ')
+													elm$html$Html$text('User ID ')
 												])),
 											rundis$elm_bootstrap$Bootstrap$Form$Input$email(
 											_List_fromArray(
 												[
-													rundis$elm_bootstrap$Bootstrap$Form$Input$id('myemail')
+													rundis$elm_bootstrap$Bootstrap$Form$Input$id('myid')
 												])),
 											A2(
 											rundis$elm_bootstrap$Bootstrap$Form$help,
@@ -8546,16 +8540,18 @@ var author$project$Main$pageHome = function (model) {
 				]))
 		]);
 };
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4 = elm$html$Html$Attributes$class('my-4');
 var author$project$Main$pageNotFound = _List_fromArray(
 	[
 		A2(
 		elm$html$Html$h1,
-		_List_Nil,
+		_List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4]),
 		_List_fromArray(
 			[
 				elm$html$Html$text('Not found')
 			])),
-		elm$html$Html$text('Sorry couldn\'t find that page')
+		elm$html$Html$text('Sorry, couldn\'t find that page')
 	]);
 var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
 	function (attributes, children) {
@@ -8577,13 +8573,884 @@ var author$project$Main$mainContent = function (model) {
 			var _n0 = model.page;
 			switch (_n0.$) {
 				case 'Home':
-					return author$project$Main$pageHome(model);
+					return author$project$Home$page(model);
 				case 'Chat':
-					return author$project$Main$pageChat(model);
+					return author$project$Chat$page(model);
 				default:
 					return author$project$Main$pageNotFound;
 			}
 		}());
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$Brand = function (a) {
+	return {$: 'Brand', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$Config = function (a) {
+	return {$: 'Config', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig = F2(
+	function (mapper, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Navbar$Config(
+			mapper(conf));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$brand = F3(
+	function (attributes, children, config_) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig,
+			function (conf) {
+				return _Utils_update(
+					conf,
+					{
+						brand: elm$core$Maybe$Just(
+							rundis$elm_bootstrap$Bootstrap$Navbar$Brand(
+								A2(
+									elm$html$Html$a,
+									_Utils_ap(
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('navbar-brand')
+											]),
+										attributes),
+									children)))
+					});
+			},
+			config_);
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$Light = {$: 'Light'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$Light = {$: 'Light'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$config = function (toMsg) {
+	return rundis$elm_bootstrap$Bootstrap$Navbar$Config(
+		{
+			brand: elm$core$Maybe$Nothing,
+			customItems: _List_Nil,
+			items: _List_Nil,
+			options: {
+				attributes: _List_Nil,
+				fix: elm$core$Maybe$Nothing,
+				isContainer: false,
+				scheme: elm$core$Maybe$Just(
+					{
+						bgColor: rundis$elm_bootstrap$Bootstrap$Navbar$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Role$Light),
+						modifier: rundis$elm_bootstrap$Bootstrap$Navbar$Light
+					}),
+				toggleAt: rundis$elm_bootstrap$Bootstrap$General$Internal$XS
+			},
+			toMsg: toMsg,
+			withAnimation: false
+		});
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$updateOptions = F2(
+	function (mapper, _n0) {
+		var conf = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Navbar$Config(
+			_Utils_update(
+				conf,
+				{
+					options: mapper(conf.options)
+				}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$container = function (conf) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Navbar$updateOptions,
+		function (opts) {
+			return _Utils_update(
+				opts,
+				{isContainer: true});
+		},
+		conf);
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$Item = function (a) {
+	return {$: 'Item', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$itemLink = F2(
+	function (attributes, children) {
+		return rundis$elm_bootstrap$Bootstrap$Navbar$Item(
+			{attributes: attributes, children: children});
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
+	function (items_, config_) {
+		return A2(
+			rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig,
+			function (conf) {
+				return _Utils_update(
+					conf,
+					{items: items_});
+			},
+			config_);
+	});
+var elm$html$Html$nav = _VirtualDom_node('nav');
+var elm$html$Html$span = _VirtualDom_node('span');
+var rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand = function (brand_) {
+	if (brand_.$ === 'Just') {
+		var b = brand_.a.a;
+		return _List_fromArray(
+			[b]);
+	} else {
+		return _List_Nil;
+	}
+};
+var elm$core$Basics$not = _Basics_not;
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$sizeToComparable = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return 1;
+		case 'SM':
+			return 2;
+		case 'MD':
+			return 3;
+		case 'LG':
+			return 4;
+		default:
+			return 5;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
+var rundis$elm_bootstrap$Bootstrap$General$Internal$MD = {$: 'MD'};
+var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$General$Internal$XL = {$: 'XL'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$toScreenSize = function (windowWidth) {
+	return (windowWidth <= 576) ? rundis$elm_bootstrap$Bootstrap$General$Internal$XS : ((windowWidth <= 768) ? rundis$elm_bootstrap$Bootstrap$General$Internal$SM : ((windowWidth <= 992) ? rundis$elm_bootstrap$Bootstrap$General$Internal$MD : ((windowWidth <= 1200) ? rundis$elm_bootstrap$Bootstrap$General$Internal$LG : rundis$elm_bootstrap$Bootstrap$General$Internal$XL)));
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$shouldHideMenu = F2(
+	function (_n0, _n1) {
+		var windowWidth = _n0.a.windowWidth;
+		var options = _n1.options;
+		var winMedia = function () {
+			if (windowWidth.$ === 'Just') {
+				var s = windowWidth.a;
+				return rundis$elm_bootstrap$Bootstrap$Navbar$toScreenSize(s);
+			} else {
+				return rundis$elm_bootstrap$Bootstrap$General$Internal$XS;
+			}
+		}();
+		return _Utils_cmp(
+			rundis$elm_bootstrap$Bootstrap$Navbar$sizeToComparable(winMedia),
+			rundis$elm_bootstrap$Bootstrap$Navbar$sizeToComparable(options.toggleAt)) > 0;
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$Shown = {$: 'Shown'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$StartDown = {$: 'StartDown'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$StartUp = {$: 'StartUp'};
+var rundis$elm_bootstrap$Bootstrap$Navbar$visibilityTransition = F2(
+	function (withAnimation_, visibility) {
+		var _n0 = _Utils_Tuple2(withAnimation_, visibility);
+		if (_n0.a) {
+			switch (_n0.b.$) {
+				case 'Hidden':
+					var _n1 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$StartDown;
+				case 'StartDown':
+					var _n2 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$AnimatingDown;
+				case 'AnimatingDown':
+					var _n3 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Shown;
+				case 'Shown':
+					var _n4 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$StartUp;
+				case 'StartUp':
+					var _n5 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$AnimatingUp;
+				default:
+					var _n6 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Hidden;
+			}
+		} else {
+			switch (_n0.b.$) {
+				case 'Hidden':
+					var _n7 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Shown;
+				case 'Shown':
+					var _n8 = _n0.b;
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Hidden;
+				default:
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Hidden;
+			}
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$transitionHandler = F2(
+	function (state, configRec) {
+		return elm$json$Json$Decode$succeed(
+			configRec.toMsg(
+				A2(
+					rundis$elm_bootstrap$Bootstrap$Navbar$mapState,
+					function (s) {
+						return _Utils_update(
+							s,
+							{
+								visibility: A2(rundis$elm_bootstrap$Bootstrap$Navbar$visibilityTransition, configRec.withAnimation, s.visibility)
+							});
+					},
+					state)));
+	});
+var elm$core$String$fromFloat = _String_fromNumber;
+var rundis$elm_bootstrap$Bootstrap$Navbar$transitionStyle = function (maybeHeight) {
+	var pixelHeight = A2(
+		elm$core$Maybe$withDefault,
+		'0',
+		A2(
+			elm$core$Maybe$map,
+			function (v) {
+				return elm$core$String$fromFloat(v) + 'px';
+			},
+			maybeHeight));
+	return _List_fromArray(
+		[
+			A2(elm$html$Html$Attributes$style, 'position', 'relative'),
+			A2(elm$html$Html$Attributes$style, 'height', pixelHeight),
+			A2(elm$html$Html$Attributes$style, 'width', '100%'),
+			A2(elm$html$Html$Attributes$style, 'overflow', 'hidden'),
+			A2(elm$html$Html$Attributes$style, '-webkit-transition-timing-function', 'ease'),
+			A2(elm$html$Html$Attributes$style, '-o-transition-timing-function', 'ease'),
+			A2(elm$html$Html$Attributes$style, 'transition-timing-function', 'ease'),
+			A2(elm$html$Html$Attributes$style, '-webkit-transition-duration', '0.35s'),
+			A2(elm$html$Html$Attributes$style, '-o-transition-duration', '0.35s'),
+			A2(elm$html$Html$Attributes$style, 'transition-duration', '0.35s'),
+			A2(elm$html$Html$Attributes$style, '-webkit-transition-property', 'height'),
+			A2(elm$html$Html$Attributes$style, '-o-transition-property', 'height'),
+			A2(elm$html$Html$Attributes$style, 'transition-property', 'height')
+		]);
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$menuAttributes = F2(
+	function (state, configRec) {
+		var visibility = state.a.visibility;
+		var height = state.a.height;
+		var defaults = _List_fromArray(
+			[
+				elm$html$Html$Attributes$class('collapse navbar-collapse')
+			]);
+		switch (visibility.$) {
+			case 'Hidden':
+				if (height.$ === 'Nothing') {
+					return ((!configRec.withAnimation) || A2(rundis$elm_bootstrap$Bootstrap$Navbar$shouldHideMenu, state, configRec)) ? defaults : _List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'display', 'block'),
+							A2(elm$html$Html$Attributes$style, 'height', '0'),
+							A2(elm$html$Html$Attributes$style, 'overflow', 'hidden'),
+							A2(elm$html$Html$Attributes$style, 'width', '100%')
+						]);
+				} else {
+					return defaults;
+				}
+			case 'StartDown':
+				return rundis$elm_bootstrap$Bootstrap$Navbar$transitionStyle(elm$core$Maybe$Nothing);
+			case 'AnimatingDown':
+				return _Utils_ap(
+					rundis$elm_bootstrap$Bootstrap$Navbar$transitionStyle(height),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$Events$on,
+							'transitionend',
+							A2(rundis$elm_bootstrap$Bootstrap$Navbar$transitionHandler, state, configRec))
+						]));
+			case 'AnimatingUp':
+				return _Utils_ap(
+					rundis$elm_bootstrap$Bootstrap$Navbar$transitionStyle(elm$core$Maybe$Nothing),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$Events$on,
+							'transitionend',
+							A2(rundis$elm_bootstrap$Bootstrap$Navbar$transitionHandler, state, configRec))
+						]));
+			case 'StartUp':
+				return rundis$elm_bootstrap$Bootstrap$Navbar$transitionStyle(height);
+			default:
+				return _Utils_ap(
+					defaults,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('show')
+						]));
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$menuWrapperAttributes = F2(
+	function (state, confRec) {
+		var visibility = state.a.visibility;
+		var height = state.a.height;
+		var styleBlock = _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'display', 'block'),
+				A2(elm$html$Html$Attributes$style, 'width', '100%')
+			]);
+		var display = function () {
+			if (height.$ === 'Nothing') {
+				return ((!confRec.withAnimation) || A2(rundis$elm_bootstrap$Bootstrap$Navbar$shouldHideMenu, state, confRec)) ? 'flex' : 'block';
+			} else {
+				return 'flex';
+			}
+		}();
+		switch (visibility.$) {
+			case 'Hidden':
+				return _List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'display', display),
+						A2(elm$html$Html$Attributes$style, 'width', '100%')
+					]);
+			case 'StartDown':
+				return styleBlock;
+			case 'AnimatingDown':
+				return styleBlock;
+			case 'AnimatingUp':
+				return styleBlock;
+			case 'StartUp':
+				return styleBlock;
+			default:
+				return ((!confRec.withAnimation) || A2(rundis$elm_bootstrap$Bootstrap$Navbar$shouldHideMenu, state, confRec)) ? _List_fromArray(
+					[
+						elm$html$Html$Attributes$class('collapse navbar-collapse show')
+					]) : _List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'display', 'block')
+					]);
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$expandOption = function (size) {
+	var toClass = function (sz) {
+		return elm$html$Html$Attributes$class(
+			'navbar-expand' + A2(
+				elm$core$Maybe$withDefault,
+				'',
+				A2(
+					elm$core$Maybe$map,
+					function (s) {
+						return '-' + s;
+					},
+					rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(sz))));
+	};
+	switch (size.$) {
+		case 'XS':
+			return _List_fromArray(
+				[
+					toClass(rundis$elm_bootstrap$Bootstrap$General$Internal$SM)
+				]);
+		case 'SM':
+			return _List_fromArray(
+				[
+					toClass(rundis$elm_bootstrap$Bootstrap$General$Internal$MD)
+				]);
+		case 'MD':
+			return _List_fromArray(
+				[
+					toClass(rundis$elm_bootstrap$Bootstrap$General$Internal$LG)
+				]);
+		case 'LG':
+			return _List_fromArray(
+				[
+					toClass(rundis$elm_bootstrap$Bootstrap$General$Internal$XL)
+				]);
+		default:
+			return _List_Nil;
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$fixOption = function (fix) {
+	if (fix.$ === 'Top') {
+		return 'fixed-top';
+	} else {
+		return 'fixed-bottom';
+	}
+};
+var elm$core$Basics$round = _Basics_round;
+var elm$core$String$concat = function (strings) {
+	return A2(elm$core$String$join, '', strings);
+};
+var avh4$elm_color$Color$toCssString = function (_n0) {
+	var r = _n0.a;
+	var g = _n0.b;
+	var b = _n0.c;
+	var a = _n0.d;
+	var roundTo = function (x) {
+		return elm$core$Basics$round(x * 1000) / 1000;
+	};
+	var pct = function (x) {
+		return elm$core$Basics$round(x * 10000) / 100;
+	};
+	return elm$core$String$concat(
+		_List_fromArray(
+			[
+				'rgba(',
+				elm$core$String$fromFloat(
+				pct(r)),
+				'%,',
+				elm$core$String$fromFloat(
+				pct(g)),
+				'%,',
+				elm$core$String$fromFloat(
+				pct(b)),
+				'%,',
+				elm$core$String$fromFloat(
+				roundTo(a)),
+				')'
+			]));
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$backgroundColorOption = function (bgClass) {
+	switch (bgClass.$) {
+		case 'Roled':
+			var role = bgClass.a;
+			return A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg', role);
+		case 'Custom':
+			var color = bgClass.a;
+			return A2(
+				elm$html$Html$Attributes$style,
+				'background-color',
+				avh4$elm_color$Color$toCssString(color));
+		default:
+			var classString = bgClass.a;
+			return elm$html$Html$Attributes$class(classString);
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$linkModifierClass = function (modifier) {
+	return elm$html$Html$Attributes$class(
+		function () {
+			if (modifier.$ === 'Dark') {
+				return 'navbar-dark';
+			} else {
+				return 'navbar-light';
+			}
+		}());
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$schemeAttributes = function (_n0) {
+	var modifier = _n0.modifier;
+	var bgColor = _n0.bgColor;
+	return _List_fromArray(
+		[
+			rundis$elm_bootstrap$Bootstrap$Navbar$linkModifierClass(modifier),
+			rundis$elm_bootstrap$Bootstrap$Navbar$backgroundColorOption(bgColor)
+		]);
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$navbarAttributes = function (options) {
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('navbar', true),
+						_Utils_Tuple2('container', options.isContainer)
+					]))
+			]),
+		_Utils_ap(
+			rundis$elm_bootstrap$Bootstrap$Navbar$expandOption(options.toggleAt),
+			_Utils_ap(
+				function () {
+					var _n0 = options.scheme;
+					if (_n0.$ === 'Just') {
+						var scheme_ = _n0.a;
+						return rundis$elm_bootstrap$Bootstrap$Navbar$schemeAttributes(scheme_);
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				_Utils_ap(
+					function () {
+						var _n1 = options.fix;
+						if (_n1.$ === 'Just') {
+							var fix = _n1.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									rundis$elm_bootstrap$Bootstrap$Navbar$fixOption(fix))
+								]);
+						} else {
+							return _List_Nil;
+						}
+					}(),
+					options.attributes))));
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$renderCustom = function (items_) {
+	return A2(
+		elm$core$List$map,
+		function (_n0) {
+			var item = _n0.a;
+			return item;
+		},
+		items_);
+};
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var elm$core$Basics$neq = _Utils_notEqual;
+var elm$html$Html$li = _VirtualDom_node('li');
+var rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus = F2(
+	function (id, _n0) {
+		var dropdowns = _n0.a.dropdowns;
+		return A2(
+			elm$core$Maybe$withDefault,
+			rundis$elm_bootstrap$Bootstrap$Navbar$Closed,
+			A2(elm$core$Dict$get, id, dropdowns));
+	});
+var elm$virtual_dom$VirtualDom$Custom = function (a) {
+	return {$: 'Custom', a: a};
+};
+var elm$html$Html$Events$custom = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Custom(decoder));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$toggleOpen = F3(
+	function (state, id, _n0) {
+		var toMsg = _n0.toMsg;
+		var currStatus = A2(rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus, id, state);
+		var newStatus = function () {
+			switch (currStatus.$) {
+				case 'Open':
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Closed;
+				case 'ListenClicks':
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Closed;
+				default:
+					return rundis$elm_bootstrap$Bootstrap$Navbar$Open;
+			}
+		}();
+		return toMsg(
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Navbar$mapState,
+				function (s) {
+					return _Utils_update(
+						s,
+						{
+							dropdowns: A3(elm$core$Dict$insert, id, newStatus, s.dropdowns)
+						});
+				},
+				state));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdownToggle = F4(
+	function (state, id, configRec, _n0) {
+		var attributes = _n0.a.attributes;
+		var children = _n0.a.children;
+		return A2(
+			elm$html$Html$a,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('nav-link dropdown-toggle'),
+						elm$html$Html$Attributes$href('#'),
+						A2(
+						elm$html$Html$Events$custom,
+						'click',
+						elm$json$Json$Decode$succeed(
+							{
+								message: A3(rundis$elm_bootstrap$Bootstrap$Navbar$toggleOpen, state, id, configRec),
+								preventDefault: true,
+								stopPropagation: false
+							}))
+					]),
+				attributes),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdown = F3(
+	function (state, configRec, _n0) {
+		var ddRec = _n0.a;
+		var needsDropup = A2(
+			elm$core$Maybe$withDefault,
+			false,
+			A2(
+				elm$core$Maybe$map,
+				function (fix) {
+					if (fix.$ === 'Bottom') {
+						return true;
+					} else {
+						return false;
+					}
+				},
+				configRec.options.fix));
+		var isShown = !_Utils_eq(
+			A2(rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus, ddRec.id, state),
+			rundis$elm_bootstrap$Bootstrap$Navbar$Closed);
+		return A2(
+			elm$html$Html$li,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('nav-item', true),
+							_Utils_Tuple2('dropdown', true),
+							_Utils_Tuple2('shown', isShown),
+							_Utils_Tuple2('dropup', needsDropup)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A4(rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdownToggle, state, ddRec.id, configRec, ddRec.toggle),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2('dropdown-menu', true),
+									_Utils_Tuple2('show', isShown)
+								]))
+						]),
+					A2(
+						elm$core$List$map,
+						function (_n1) {
+							var item = _n1.a;
+							return item;
+						},
+						ddRec.items))
+				]));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$renderItemLink = function (_n0) {
+	var attributes = _n0.attributes;
+	var children = _n0.children;
+	return A2(
+		elm$html$Html$li,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('nav-item')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$a,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('nav-link')
+						]),
+					attributes),
+				children)
+			]));
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$renderNav = F3(
+	function (state, configRec, navItems) {
+		return A2(
+			elm$html$Html$ul,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('navbar-nav mr-auto')
+				]),
+			A2(
+				elm$core$List$map,
+				function (item) {
+					if (item.$ === 'Item') {
+						var item_ = item.a;
+						return rundis$elm_bootstrap$Bootstrap$Navbar$renderItemLink(item_);
+					} else {
+						var dropdown_ = item.a;
+						return A3(rundis$elm_bootstrap$Bootstrap$Navbar$renderDropdown, state, configRec, dropdown_);
+					}
+				},
+				navItems));
+	});
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$decodeValue = _Json_run;
+var elm$json$Json$Decode$fail = _Json_fail;
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$value = _Json_decodeValue;
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$parentElement = function (decoder) {
+	return A2(elm$json$Json$Decode$field, 'parentElement', decoder);
+};
+var rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target = function (decoder) {
+	return A2(elm$json$Json$Decode$field, 'target', decoder);
+};
+var rundis$elm_bootstrap$Bootstrap$Navbar$heightDecoder = function () {
+	var tagDecoder = A3(
+		elm$json$Json$Decode$map2,
+		F2(
+			function (tag, val) {
+				return _Utils_Tuple2(tag, val);
+			}),
+		A2(elm$json$Json$Decode$field, 'tagName', elm$json$Json$Decode$string),
+		elm$json$Json$Decode$value);
+	var resToDec = function (res) {
+		if (res.$ === 'Ok') {
+			var v = res.a;
+			return elm$json$Json$Decode$succeed(v);
+		} else {
+			var err = res.a;
+			return elm$json$Json$Decode$fail(
+				elm$json$Json$Decode$errorToString(err));
+		}
+	};
+	var fromNavDec = elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(
+				elm$json$Json$Decode$at,
+				_List_fromArray(
+					['childNodes', '2', 'childNodes', '0', 'offsetHeight']),
+				elm$json$Json$Decode$float),
+				A2(
+				elm$json$Json$Decode$at,
+				_List_fromArray(
+					['childNodes', '1', 'childNodes', '0', 'offsetHeight']),
+				elm$json$Json$Decode$float)
+			]));
+	var fromButtonDec = rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$parentElement(fromNavDec);
+	return A2(
+		elm$json$Json$Decode$andThen,
+		function (_n0) {
+			var tag = _n0.a;
+			var val = _n0.b;
+			switch (tag) {
+				case 'NAV':
+					return resToDec(
+						A2(elm$json$Json$Decode$decodeValue, fromNavDec, val));
+				case 'BUTTON':
+					return resToDec(
+						A2(elm$json$Json$Decode$decodeValue, fromButtonDec, val));
+				default:
+					return elm$json$Json$Decode$succeed(0);
+			}
+		},
+		rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$target(
+			rundis$elm_bootstrap$Bootstrap$Utilities$DomHelper$parentElement(tagDecoder)));
+}();
+var rundis$elm_bootstrap$Bootstrap$Navbar$toggleHandler = F2(
+	function (state, configRec) {
+		var height = state.a.height;
+		var updState = function (h) {
+			return A2(
+				rundis$elm_bootstrap$Bootstrap$Navbar$mapState,
+				function (s) {
+					return _Utils_update(
+						s,
+						{
+							height: elm$core$Maybe$Just(h),
+							visibility: A2(rundis$elm_bootstrap$Bootstrap$Navbar$visibilityTransition, configRec.withAnimation, s.visibility)
+						});
+				},
+				state);
+		};
+		return A2(
+			elm$html$Html$Events$on,
+			'click',
+			A2(
+				elm$json$Json$Decode$andThen,
+				function (v) {
+					return elm$json$Json$Decode$succeed(
+						configRec.toMsg(
+							(v > 0) ? updState(v) : updState(
+								A2(elm$core$Maybe$withDefault, 0, height))));
+				},
+				rundis$elm_bootstrap$Bootstrap$Navbar$heightDecoder));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$view = F2(
+	function (state, conf) {
+		var configRec = conf.a;
+		return A2(
+			elm$html$Html$nav,
+			rundis$elm_bootstrap$Bootstrap$Navbar$navbarAttributes(configRec.options),
+			_Utils_ap(
+				rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand(configRec.brand),
+				_Utils_ap(
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$button,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'navbar-toggler' + A2(
+										elm$core$Maybe$withDefault,
+										'',
+										A2(
+											elm$core$Maybe$map,
+											function (_n0) {
+												return ' navbar-toggler-right';
+											},
+											configRec.brand))),
+									elm$html$Html$Attributes$type_('button'),
+									A2(rundis$elm_bootstrap$Bootstrap$Navbar$toggleHandler, state, configRec)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$span,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('navbar-toggler-icon')
+										]),
+									_List_Nil)
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							A2(rundis$elm_bootstrap$Bootstrap$Navbar$menuAttributes, state, configRec),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									A2(rundis$elm_bootstrap$Bootstrap$Navbar$menuWrapperAttributes, state, configRec),
+									_Utils_ap(
+										_List_fromArray(
+											[
+												A3(rundis$elm_bootstrap$Bootstrap$Navbar$renderNav, state, configRec, configRec.items)
+											]),
+										rundis$elm_bootstrap$Bootstrap$Navbar$renderCustom(configRec.customItems)))
+								]))
+						]))));
+	});
+var rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation = function (config_) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Navbar$updateConfig,
+		function (conf) {
+			return _Utils_update(
+				conf,
+				{withAnimation: true});
+		},
+		config_);
+};
+var author$project$Main$menu = function (model) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Navbar$view,
+		model.navState,
+		A2(
+			rundis$elm_bootstrap$Bootstrap$Navbar$items,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$href('/')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Home')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$href('chat')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Chat')
+						]))
+				]),
+			A3(
+				rundis$elm_bootstrap$Bootstrap$Navbar$brand,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$href('/')
+					]),
+				_List_Nil,
+				rundis$elm_bootstrap$Bootstrap$Navbar$container(
+					rundis$elm_bootstrap$Bootstrap$Navbar$withAnimation(
+						rundis$elm_bootstrap$Bootstrap$Navbar$config(author$project$Model$NavMsg))))));
 };
 var author$project$Main$view = function (model) {
 	return {
@@ -8594,15 +9461,32 @@ var author$project$Main$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
+						author$project$Main$menu(model),
 						author$project$Main$mainContent(model)
 					]))
 			]),
-		title: 'Elm Bootstrap'
+		title: function () {
+			var _n0 = model.page;
+			switch (_n0.$) {
+				case 'Home':
+					return 'Log In';
+				case 'Chat':
+					return 'Chat';
+				default:
+					return 'Page Not Found';
+			}
+		}()
 	};
+};
+var author$project$Model$ClickedLink = function (a) {
+	return {$: 'ClickedLink', a: a};
+};
+var author$project$Model$UrlChange = function (a) {
+	return {$: 'UrlChange', a: a};
 };
 var elm$browser$Browser$application = _Browser_application;
 var author$project$Main$main = elm$browser$Browser$application(
-	{init: author$project$Main$init, onUrlChange: author$project$Main$UrlChange, onUrlRequest: author$project$Main$ClickedLink, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
+	{init: author$project$Main$init, onUrlChange: author$project$Model$UrlChange, onUrlRequest: author$project$Model$ClickedLink, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	elm$json$Json$Decode$succeed(
 		{}))(0)}});}(this));

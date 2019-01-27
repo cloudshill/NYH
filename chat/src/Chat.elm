@@ -20,6 +20,7 @@ import Bootstrap.Form.Fieldset as Fieldset
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
+import Bootstrap.ListGroup as ListGroup
 
 import Model exposing (Model,Msg(..))
 
@@ -27,9 +28,16 @@ import Model exposing (Model,Msg(..))
 page : Model -> List (Html Msg)
 page model =
     [ h2 [] [ text "Chat" ]
+    {-
+    , ListGroup.ul
+        [ ListGroup.li [] [ text "List item 1" ]
+        , ListGroup.li [] [ text "List item 2" ]
+        , ListGroup.li [] [ text "List item 3" ]
+        ]
+    -}
     , Card.config []
         |> Card.header [ ]
-            [ h3 [ ] [ text "Me" ]
+            [ h3 [ ] [ text "Hi" ]
                 ]
         |> Card.block []
             [ Block.text [] [ text "My message" ]

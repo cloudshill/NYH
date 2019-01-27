@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Browser.Navigation as Navigation
 import Browser exposing (UrlRequest)
+import Browser.Dom as Dom
 import Url exposing (Url)
 import Url.Parser as UrlParser exposing ((</>), Parser, s, top)
 import Bootstrap.Navbar as Navbar
@@ -20,21 +21,16 @@ import Bootstrap.Form.Fieldset as Fieldset
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
+import Bootstrap.Utilities.Spacing as Spacing
+import Task
+
+import Model exposing(Model,Page(..),Msg(..))
+import Home
+import Chat
 
 
 type alias Flags =
     {}
-
-type alias Model =
-    { navKey : Navigation.Key
-    , page : Page
-    , navState : Navbar.State
-    }
-
-type Page
-    = Home
-    | Chat
-    | NotFound
 
 
 main : Program Flags Model Msg
@@ -55,15 +51,13 @@ init flags url key =
             Navbar.initialState NavMsg
 
         ( model, urlCmd ) =
-            urlUpdate url { navKey = key, navState = navState, page = Home }
+            urlUpdate url { navKey = key
+                          , navState = navState
+                          , page = Home
+                          }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
 
-
-type Msg
-    = UrlChange Url
-    | ClickedLink UrlRequest
-    | NavMsg Navbar.State
 
 
 subscriptions : Model -> Sub Msg
@@ -91,6 +85,8 @@ update msg model =
             , Cmd.none
             )
 
+        NoOp -> (model, Cmd.none)
+
 
 
 
@@ -98,16 +94,18 @@ urlUpdate : Url -> Model -> ( Model, Cmd Msg )
 urlUpdate url model =
     case decode url of
         Nothing ->
-            ( { model | page = NotFound }, Cmd.none )
+            ( { model | page = NotFound }, resetViewport )
 
         Just route ->
-            ( { model | page = route }, Cmd.none )
+            ( { model | page = route }, resetViewport )
 
+resetViewport : Cmd Msg
+resetViewport =
+  Task.perform (\_ -> NoOp) (Dom.setViewport 0 0)
 
 decode : Url -> Maybe Page
-decode url =
-    { url | path = Maybe.withDefault "" url.fragment, fragment = Nothing }
-    |> UrlParser.parse routeParser
+decode =
+    UrlParser.parse routeParser
 
 
 routeParser : Parser (Page -> a) a
@@ -120,84 +118,51 @@ routeParser =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Elm Bootstrap"
+    { title = case model.page of
+          Home ->
+              "Log In"
+
+          Chat ->
+              "Chat"
+
+          NotFound ->
+              "Page Not Found"
     , body =
         [ div []
-            [ mainContent model
+            [ menu model
+            , mainContent model
             ]
         ]
     }
 
-
-
+menu : Model -> Html Msg
+menu model =
+    Navbar.config NavMsg
+        |> Navbar.withAnimation
+        |> Navbar.container
+        |> Navbar.brand [ href "/" ] []
+        |> Navbar.items
+            [ Navbar.itemLink [ href "/" ] [ text "Home" ]
+            , Navbar.itemLink [ href "chat" ] [ text "Chat" ]
+            ]
+        |> Navbar.view model.navState
 
 mainContent : Model -> Html Msg
 mainContent model =
     Grid.container [] <|
         case model.page of
             Home ->
-                pageHome model
+                Home.page model
 
             Chat ->
-                pageChat model
+                Chat.page model
 
             NotFound ->
                 pageNotFound
 
 
-pageHome : Model -> List (Html Msg)
-pageHome model =
-    [ h1 [] [ text "Log In" ]
-    , Grid.row []
-        [ Grid.col []
-            [ Form.form []
-                [ Form.group []
-                    [ Form.label [for "myemail"] [ text "Email address "]
-                    , Input.email [ Input.id "myemail" ]
-                    , Form.help [] [ text "We'll never share your email with anyone else." ]
-                    ]
-                , Form.group []
-                    [ Form.label [for "mypwd"] [ text "Password "]
-                    , Input.password [ Input.id "mypwd" ]
-                    ]
-                , a [href "#chat"] [Button.button [][text "Submit"]]
-                ]
-            ]
-        ]
-    ]
-
-
-pageChat : Model -> List (Html Msg)
-pageChat model =
-    [ h2 [] [ text "Chat" ]
-    , Card.config []
-        |> Card.header [ ]
-            [ h3 [ ] [ text "Me" ]
-                ]
-        |> Card.block []
-            [ Block.text [] [ text "My message" ]
-            ]
-        |> Card.view
-    , Card.config []
-        |> Card.header [ ]
-            [ h3 [ ] [ text "You" ]
-                ]
-        |> Card.block []
-            [ Block.text [] [ text "Your message" ]
-            ]
-        |> Card.view
-    , Form.group []
-        [ Textarea.textarea
-            [ Textarea.id "myarea"
-            , Textarea.rows 3
-            ]
-        ]
-    , Button.button [] [text "Send"]
-    ]
-
-
 pageNotFound : List (Html Msg)
 pageNotFound =
-    [ h1 [] [ text "Not found" ]
-    , text "Sorry couldn't find that page"
+    [ h1 [Spacing.my4] [ text "Not found" ]
+    , text "Sorry, couldn't find that page"
     ]

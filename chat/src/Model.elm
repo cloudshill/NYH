@@ -38,3 +38,4 @@ type Msg
     = UrlChange Url
     | ClickedLink UrlRequest
     | NavMsg Navbar.State
+    | NoOp
