@@ -28,13 +28,17 @@ import Model exposing (Model,Msg(..))
 page : Model -> List (Html Msg)
 page model =
     [ h2 [] [ text "Chat" ]
-    {-
+
     , ListGroup.ul
-        [ ListGroup.li [] [ text "List item 1" ]
-        , ListGroup.li [] [ text "List item 2" ]
-        , ListGroup.li [] [ text "List item 3" ]
+        [ ListGroup.li [ ListGroup.primary ] [ text "Hi" ]
+        , ListGroup.li [ ListGroup.light ] [ text "Hey" ]
+        , ListGroup.li [ ListGroup.primary ] [ text "How are you?" ]
+        , ListGroup.li [ ListGroup.light ] [ text "Hey" ]
+        , ListGroup.li [ ListGroup.primary ] [ text "How are you?" ]
+        , ListGroup.li [ ListGroup.light ] [ text "Hey" ]
+        , ListGroup.li [ ListGroup.primary ] [ text "How are you?" ]
         ]
-    -}
+{-
     , Card.config []
         |> Card.header [ ]
             [ h3 [ ] [ text "Hi" ]
@@ -50,12 +54,12 @@ page model =
         |> Card.block []
             [ Block.text [] [ text "Your message" ]
             ]
-        |> Card.view
+        |> Card.view -}
     , Form.group []
         [ Textarea.textarea
             [ Textarea.id "myarea"
             , Textarea.rows 3
             ]
-        ]
+        ] 
     , Button.button [] [text "Send"]
     ]
