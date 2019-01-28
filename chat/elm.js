@@ -6627,7 +6627,6 @@ var author$project$Main$update = F2(
 		}
 	});
 var elm$html$Html$h2 = _VirtualDom_node('h2');
-var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$html$Html$button = _VirtualDom_node('button');
@@ -6814,386 +6813,7 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
 			children);
 	});
-var rundis$elm_bootstrap$Bootstrap$Card$Config = function (a) {
-	return {$: 'Config', a: a};
-};
 var elm$html$Html$div = _VirtualDom_node('div');
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$CardBlock = function (a) {
-	return {$: 'CardBlock', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$applyBlockModifier = F2(
-	function (option, options) {
-		switch (option.$) {
-			case 'AlignedBlock':
-				var align = option.a;
-				return _Utils_update(
-					options,
-					{
-						aligned: elm$core$Maybe$Just(align)
-					});
-			case 'BlockColoring':
-				var role = option.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: elm$core$Maybe$Just(role)
-					});
-			case 'BlockTextColoring':
-				var color = option.a;
-				return _Utils_update(
-					options,
-					{
-						textColoring: elm$core$Maybe$Just(color)
-					});
-			default:
-				var attrs = option.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$defaultBlockOptions = {aligned: elm$core$Maybe$Nothing, attributes: _List_Nil, coloring: elm$core$Maybe$Nothing, textColoring: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
-	function (prefix, role) {
-		return elm$html$Html$Attributes$class(
-			prefix + ('-' + function () {
-				switch (role.$) {
-					case 'Primary':
-						return 'primary';
-					case 'Secondary':
-						return 'secondary';
-					case 'Success':
-						return 'success';
-					case 'Info':
-						return 'info';
-					case 'Warning':
-						return 'warning';
-					case 'Danger':
-						return 'danger';
-					case 'Light':
-						return 'light';
-					default:
-						return 'dark';
-				}
-			}()));
-	});
-var elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignDirOption = function (dir) {
-	switch (dir.$) {
-		case 'Center':
-			return 'center';
-		case 'Left':
-			return 'left';
-		default:
-			return 'right';
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignClass = function (_n0) {
-	var dir = _n0.dir;
-	var size = _n0.size;
-	return elm$html$Html$Attributes$class(
-		'text' + (A2(
-			elm$core$Maybe$withDefault,
-			'-',
-			A2(
-				elm$core$Maybe$map,
-				function (s) {
-					return '-' + (s + '-');
-				},
-				rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size))) + rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignDirOption(dir)));
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Text$textColorClass = function (color) {
-	if (color.$ === 'White') {
-		return elm$html$Html$Attributes$class('text-white');
-	} else {
-		var role = color.a;
-		return A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'text', role);
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$blockAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Card$Internal$applyBlockModifier, rundis$elm_bootstrap$Bootstrap$Card$Internal$defaultBlockOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('card-body')
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = options.aligned;
-				if (_n0.$ === 'Just') {
-					var align = _n0.a;
-					return _List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignClass(align)
-						]);
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _n1 = options.coloring;
-					if (_n1.$ === 'Just') {
-						var role = _n1.a;
-						return _List_fromArray(
-							[
-								A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg', role)
-							]);
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				_Utils_ap(
-					function () {
-						var _n2 = options.textColoring;
-						if (_n2.$ === 'Just') {
-							var color = _n2.a;
-							return _List_fromArray(
-								[
-									rundis$elm_bootstrap$Bootstrap$Internal$Text$textColorClass(color)
-								]);
-						} else {
-							return _List_Nil;
-						}
-					}(),
-					options.attributes))));
-};
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$block = F2(
-	function (options, items) {
-		return rundis$elm_bootstrap$Bootstrap$Card$Internal$CardBlock(
-			A2(
-				elm$html$Html$div,
-				rundis$elm_bootstrap$Bootstrap$Card$Internal$blockAttributes(options),
-				A2(
-					elm$core$List$map,
-					function (_n0) {
-						var e = _n0.a;
-						return e;
-					},
-					items)));
-	});
-var rundis$elm_bootstrap$Bootstrap$Card$block = F3(
-	function (options, items, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Card$Config(
-			_Utils_update(
-				conf,
-				{
-					blocks: _Utils_ap(
-						conf.blocks,
-						_List_fromArray(
-							[
-								A2(rundis$elm_bootstrap$Bootstrap$Card$Internal$block, options, items)
-							]))
-				}));
-	});
-var rundis$elm_bootstrap$Bootstrap$Card$config = function (options) {
-	return rundis$elm_bootstrap$Bootstrap$Card$Config(
-		{blocks: _List_Nil, footer: elm$core$Maybe$Nothing, header: elm$core$Maybe$Nothing, imgBottom: elm$core$Maybe$Nothing, imgTop: elm$core$Maybe$Nothing, options: options});
-};
-var rundis$elm_bootstrap$Bootstrap$Card$Header = function (a) {
-	return {$: 'Header', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Card$headerPrivate = F4(
-	function (elemFn, attributes, children, _n0) {
-		var conf = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Card$Config(
-			_Utils_update(
-				conf,
-				{
-					header: elm$core$Maybe$Just(
-						rundis$elm_bootstrap$Bootstrap$Card$Header(
-							A2(
-								elemFn,
-								A2(
-									elm$core$List$cons,
-									elm$html$Html$Attributes$class('card-header'),
-									attributes),
-								children)))
-				}));
-	});
-var rundis$elm_bootstrap$Bootstrap$Card$header = rundis$elm_bootstrap$Bootstrap$Card$headerPrivate(elm$html$Html$div);
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$applyModifier = F2(
-	function (option, options) {
-		switch (option.$) {
-			case 'Aligned':
-				var align = option.a;
-				return _Utils_update(
-					options,
-					{
-						aligned: elm$core$Maybe$Just(align)
-					});
-			case 'Coloring':
-				var coloring = option.a;
-				return _Utils_update(
-					options,
-					{
-						coloring: elm$core$Maybe$Just(coloring)
-					});
-			case 'TextColoring':
-				var coloring = option.a;
-				return _Utils_update(
-					options,
-					{
-						textColoring: elm$core$Maybe$Just(coloring)
-					});
-			default:
-				var attrs = option.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$defaultOptions = {aligned: elm$core$Maybe$Nothing, attributes: _List_Nil, coloring: elm$core$Maybe$Nothing, textColoring: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$cardAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Card$Internal$applyModifier, rundis$elm_bootstrap$Bootstrap$Card$Internal$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('card')
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = options.coloring;
-				if (_n0.$ === 'Just') {
-					if (_n0.a.$ === 'Roled') {
-						var role = _n0.a.a;
-						return _List_fromArray(
-							[
-								A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'bg', role)
-							]);
-					} else {
-						var role = _n0.a.a;
-						return _List_fromArray(
-							[
-								A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'border', role)
-							]);
-					}
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _n1 = options.textColoring;
-					if (_n1.$ === 'Just') {
-						var color = _n1.a;
-						return _List_fromArray(
-							[
-								rundis$elm_bootstrap$Bootstrap$Internal$Text$textColorClass(color)
-							]);
-					} else {
-						return _List_Nil;
-					}
-				}(),
-				_Utils_ap(
-					function () {
-						var _n2 = options.aligned;
-						if (_n2.$ === 'Just') {
-							var align = _n2.a;
-							return _List_fromArray(
-								[
-									rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignClass(align)
-								]);
-						} else {
-							return _List_Nil;
-						}
-					}(),
-					options.attributes))));
-};
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$renderBlocks = function (blocks) {
-	return A2(
-		elm$core$List$map,
-		function (block_) {
-			if (block_.$ === 'CardBlock') {
-				var e = block_.a;
-				return e;
-			} else {
-				var e = block_.a;
-				return e;
-			}
-		},
-		blocks);
-};
-var rundis$elm_bootstrap$Bootstrap$Card$view = function (_n0) {
-	var conf = _n0.a;
-	return A2(
-		elm$html$Html$div,
-		rundis$elm_bootstrap$Bootstrap$Card$Internal$cardAttributes(conf.options),
-		_Utils_ap(
-			A2(
-				elm$core$List$filterMap,
-				elm$core$Basics$identity,
-				_List_fromArray(
-					[
-						A2(
-						elm$core$Maybe$map,
-						function (_n1) {
-							var e = _n1.a;
-							return e;
-						},
-						conf.header),
-						A2(
-						elm$core$Maybe$map,
-						function (_n2) {
-							var e = _n2.a;
-							return e;
-						},
-						conf.imgTop)
-					])),
-			_Utils_ap(
-				rundis$elm_bootstrap$Bootstrap$Card$Internal$renderBlocks(conf.blocks),
-				A2(
-					elm$core$List$filterMap,
-					elm$core$Basics$identity,
-					_List_fromArray(
-						[
-							A2(
-							elm$core$Maybe$map,
-							function (_n3) {
-								var e = _n3.a;
-								return e;
-							},
-							conf.footer),
-							A2(
-							elm$core$Maybe$map,
-							function (_n4) {
-								var e = _n4.a;
-								return e;
-							},
-							conf.imgBottom)
-						])))));
-};
-var elm$html$Html$p = _VirtualDom_node('p');
-var rundis$elm_bootstrap$Bootstrap$Card$Internal$BlockItem = function (a) {
-	return {$: 'BlockItem', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Card$Block$text = F2(
-	function (attributes, children) {
-		return rundis$elm_bootstrap$Bootstrap$Card$Internal$BlockItem(
-			A2(
-				elm$html$Html$p,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('card-text')
-						]),
-					attributes),
-				children));
-	});
 var rundis$elm_bootstrap$Bootstrap$Form$applyModifier = F2(
 	function (modifier, options) {
 		var attrs = modifier.a;
@@ -7240,6 +6860,16 @@ var rundis$elm_bootstrap$Bootstrap$Form$Textarea$create = function (options) {
 		{options: options});
 };
 var elm$html$Html$textarea = _VirtualDom_node('textarea');
+var elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$html$Html$Attributes$rows = function (n) {
 	return A2(
@@ -7374,6 +7004,131 @@ var rundis$elm_bootstrap$Bootstrap$Form$Textarea$view = function (_n0) {
 		_List_Nil);
 };
 var rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea = A2(elm$core$Basics$composeL, rundis$elm_bootstrap$Bootstrap$Form$Textarea$view, rundis$elm_bootstrap$Bootstrap$Form$Textarea$create);
+var elm$html$Html$li = _VirtualDom_node('li');
+var rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$Item = function (a) {
+	return {$: 'Item', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$ListGroup$li = F2(
+	function (options, children) {
+		return rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$Item(
+			{children: children, itemFn: elm$html$Html$li, options: options});
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$Light = {$: 'Light'};
+var rundis$elm_bootstrap$Bootstrap$ListGroup$light = rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Role$Light);
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$ListGroup$primary = rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Role$Primary);
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Roled':
+				var role = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						role: elm$core$Maybe$Just(role)
+					});
+			case 'Action':
+				return _Utils_update(
+					options,
+					{action: true});
+			case 'Disabled':
+				return _Utils_update(
+					options,
+					{disabled: true});
+			case 'Active':
+				return _Utils_update(
+					options,
+					{active: true});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$defaultOptions = {action: false, active: false, attributes: _List_Nil, disabled: false, role: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass = F2(
+	function (prefix, role) {
+		return elm$html$Html$Attributes$class(
+			prefix + ('-' + function () {
+				switch (role.$) {
+					case 'Primary':
+						return 'primary';
+					case 'Secondary':
+						return 'secondary';
+					case 'Success':
+						return 'success';
+					case 'Info':
+						return 'info';
+					case 'Warning':
+						return 'warning';
+					case 'Danger':
+						return 'danger';
+					case 'Light':
+						return 'light';
+					default:
+						return 'dark';
+				}
+			}()));
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$itemAttributes = function (options) {
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('list-group-item', true),
+						_Utils_Tuple2('disabled', options.disabled),
+						_Utils_Tuple2('active', options.active),
+						_Utils_Tuple2('list-group-item-action', options.action)
+					]))
+			]),
+		_Utils_ap(
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$disabled(options.disabled)
+				]),
+			_Utils_ap(
+				A2(
+					elm$core$Maybe$withDefault,
+					_List_Nil,
+					A2(
+						elm$core$Maybe$map,
+						function (r) {
+							return _List_fromArray(
+								[
+									A2(rundis$elm_bootstrap$Bootstrap$Internal$Role$toClass, 'list-group-item', r)
+								]);
+						},
+						options.role)),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$renderItem = function (_n0) {
+	var itemFn = _n0.a.itemFn;
+	var options = _n0.a.options;
+	var children = _n0.a.children;
+	return A2(
+		itemFn,
+		rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$itemAttributes(
+			A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$defaultOptions, options)),
+		children);
+};
+var rundis$elm_bootstrap$Bootstrap$ListGroup$ul = function (items) {
+	return A2(
+		elm$html$Html$ul,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('list-group')
+			]),
+		A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Internal$ListGroup$renderItem, items));
+};
 var author$project$Chat$page = function (model) {
 	return _List_fromArray(
 		[
@@ -7384,62 +7139,66 @@ var author$project$Chat$page = function (model) {
 				[
 					elm$html$Html$text('Chat')
 				])),
-			rundis$elm_bootstrap$Bootstrap$Card$view(
-			A3(
-				rundis$elm_bootstrap$Bootstrap$Card$block,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						rundis$elm_bootstrap$Bootstrap$Card$Block$text,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('My message')
-							]))
-					]),
-				A3(
-					rundis$elm_bootstrap$Bootstrap$Card$header,
-					_List_Nil,
+			rundis$elm_bootstrap$Bootstrap$ListGroup$ul(
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
 					_List_fromArray(
 						[
-							A2(
-							elm$html$Html$h3,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('Hi')
-								]))
-						]),
-					rundis$elm_bootstrap$Bootstrap$Card$config(_List_Nil)))),
-			rundis$elm_bootstrap$Bootstrap$Card$view(
-			A3(
-				rundis$elm_bootstrap$Bootstrap$Card$block,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						rundis$elm_bootstrap$Bootstrap$Card$Block$text,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('Your message')
-							]))
-					]),
-				A3(
-					rundis$elm_bootstrap$Bootstrap$Card$header,
-					_List_Nil,
+							elm$html$Html$text('Hi')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
 					_List_fromArray(
 						[
-							A2(
-							elm$html$Html$h3,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('You')
-								]))
-						]),
-					rundis$elm_bootstrap$Bootstrap$Card$config(_List_Nil)))),
+							elm$html$Html$text('Hey')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('How are you?')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Hey')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('How are you?')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Hey')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('How are you?')
+						]))
+				])),
 			A2(
 			rundis$elm_bootstrap$Bootstrap$Form$group,
 			_List_Nil,
@@ -8223,6 +7982,30 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$vAlignsToAttributes = F2(
 			elm$core$Basics$identity,
 			A2(elm$core$List$map, align, aligns));
 	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignDirOption = function (dir) {
+	switch (dir.$) {
+		case 'Center':
+			return 'center';
+		case 'Left':
+			return 'left';
+		default:
+			return 'right';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignClass = function (_n0) {
+	var dir = _n0.dir;
+	var size = _n0.size;
+	return elm$html$Html$Attributes$class(
+		'text' + (A2(
+			elm$core$Maybe$withDefault,
+			'-',
+			A2(
+				elm$core$Maybe$map,
+				function (s) {
+					return '-' + (s + '-');
+				},
+				rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size))) + rundis$elm_bootstrap$Bootstrap$Internal$Text$textAlignDirOption(dir)));
+};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$colAttributes = function (modifiers) {
 	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Grid$Internal$applyColOption, rundis$elm_bootstrap$Bootstrap$Grid$Internal$defaultColOptions, modifiers);
 	var shouldAddDefaultXs = !elm$core$List$length(
@@ -8626,7 +8409,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$brand = F3(
 			},
 			config_);
 	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Role$Light = {$: 'Light'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$Light = {$: 'Light'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$Roled = function (a) {
 	return {$: 'Roled', a: a};
@@ -9091,9 +8873,7 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$renderCustom = function (items_) {
 		},
 		items_);
 };
-var elm$html$Html$ul = _VirtualDom_node('ul');
 var elm$core$Basics$neq = _Utils_notEqual;
-var elm$html$Html$li = _VirtualDom_node('li');
 var rundis$elm_bootstrap$Bootstrap$Navbar$getOrInitDropdownStatus = F2(
 	function (id, _n0) {
 		var dropdowns = _n0.a.dropdowns;
