@@ -30,7 +30,11 @@ page model =
     [ h2 [] [ text "Chat" ]
 
     , ListGroup.ul
-        [ ListGroup.li [ ListGroup.primary ] [ text "Hi" ]
+        [ ListGroup.li
+            [ ListGroup.primary ]
+            [ text "Hi"
+            , [ ListGroup.span [] [ text "@"] ]
+              ]
         , ListGroup.li [ ListGroup.light ] [ text "Hey" ]
         , ListGroup.li [ ListGroup.primary ] [ text "How are you?" ]
         , ListGroup.li [ ListGroup.light ] [ text "Hey" ]
@@ -60,6 +64,6 @@ page model =
             [ Textarea.id "myarea"
             , Textarea.rows 3
             ]
-        ] 
+        ]
     , Button.button [] [text "Send"]
     ]
