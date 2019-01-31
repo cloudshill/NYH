@@ -10,24 +10,11 @@ import Url exposing (Url)
 import Url.Parser as UrlParser exposing ((</>), Parser, s, top)
 import Bootstrap.Navbar as Navbar
 import Bootstrap.Grid as Grid
-import Bootstrap.Grid.Col as Col
-import Bootstrap.Form as Form
-import Bootstrap.Form.Input as Input
-import Bootstrap.Form.Select as Select
-import Bootstrap.Form.Checkbox as Checkbox
-import Bootstrap.Form.Radio as Radio
-import Bootstrap.Form.Textarea as Textarea
-import Bootstrap.Form.Fieldset as Fieldset
-import Bootstrap.Button as Button
-import Bootstrap.Card as Card
-import Bootstrap.Card.Block as Block
 import Bootstrap.Utilities.Spacing as Spacing
 import Task
 
 import Model exposing(Model,Page(..),Msg(..))
 import Home
-import Chat
-
 
 type alias Flags =
     {}
@@ -112,7 +99,6 @@ routeParser : Parser (Page -> a) a
 routeParser =
     UrlParser.oneOf
         [ UrlParser.map Home top
-        , UrlParser.map Chat (s "chat")
         ]
 
 
@@ -120,32 +106,16 @@ view : Model -> Browser.Document Msg
 view model =
     { title = case model.page of
           Home ->
-              "Log In"
-
-          Chat ->
-              "Chat"
+              "Page (change me in main.elm)"
 
           NotFound ->
               "Page Not Found"
     , body =
         [ div []
-            [ menu model
-            , mainContent model
+            [ mainContent model
             ]
         ]
     }
-
-menu : Model -> Html Msg
-menu model =
-    Navbar.config NavMsg
-        |> Navbar.withAnimation
-        |> Navbar.container
-        |> Navbar.brand [ href "#" ] []
-        |> Navbar.items
-            [ Navbar.itemLink [ href "#" ] [ text "Home" ]
-            , Navbar.itemLink [ href "#chat" ] [ text "Chat" ]
-            ]
-        |> Navbar.view model.navState
 
 mainContent : Model -> Html Msg
 mainContent model =
@@ -153,9 +123,6 @@ mainContent model =
         case model.page of
             Home ->
                 Home.page model
-
-            Chat ->
-                Chat.page model
 
             NotFound ->
                 pageNotFound
