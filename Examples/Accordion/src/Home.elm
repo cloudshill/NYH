@@ -17,6 +17,11 @@ import Bootstrap.Card.Block as Block
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 
+import Bootstrap.Modal as Modal
+
+import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
+
 
 
 import Model exposing (Model,Msg(..))
@@ -104,7 +109,9 @@ page model =
     , Grid.row []
         [ Grid.col []
             [ a [target "_blank", href "https://www.google.ca/"] [ text "This is also a link"]]
-        , Grid.col []
+        ]
+    , Grid.row []
+        [ Grid.col []
             [ text "This picture has a link:"
             , a [target "_blank", href "https://www.google.ca/"] [img [style "width" "150px", src "img/school.png"] []]
             ]
@@ -129,7 +136,7 @@ page model =
                         { id = "card1" --each accordion card needs an id
                         , options = []
                         , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Accordion card 1 name" ]
+                            Accordion.header [] <| Accordion.toggle [] [ text "Community Involvement" ]
                         , blocks =
                             [ Accordion.block []
                                 [ Block.text [] [ text "Text inside card 1" ] ]
@@ -139,7 +146,7 @@ page model =
                         { id = "card2"
                         , options = []
                         , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Accordion card 2 name" ]
+                            Accordion.header [] <| Accordion.toggle [] [ text "Awards and Achievments" ]
                         , blocks =
                             [ Accordion.block []
                                 [ Block.text [] [ text "Text inside card 2" ] ]
@@ -163,12 +170,36 @@ page model =
                 |> Accordion.view model.accordionState
             ]
         ]
-        ,Carousel.config CarouselMsg []
+        ,Carousel.config CarouselMsg [style "height" "500px"]
                 |> Carousel.slides
-                    [ Slide.config [] (Slide.image [] "grad-cap.png")
-                    , Slide.config [] (Slide.image [] "school.png")
-                    , Slide.config [] (Slide.image [] "assets/img3.jpg")
+                    [ Slide.config [] (image "500px" "https://c1.staticflickr.com/8/7018/6446600053_14c322b898_b.jpg")
+                    , Slide.config [] (image "500px" "img/sports.jpg")
                     ]
+                |> Carousel.withControls
+                |> Carousel.withIndicators
                 |> Carousel.view model.carouselState
+      , div []
+        [Button.button
+            [ Button.outlineSuccess
+            , Button.attrs [ onClick <| ShowModal ]
+            ]
+            [ text "Open Modal"]
+
+        , Modal.config CloseModal
+            |> Modal.small
+            |> Modal.hideOnBackdropClick True
+            |> Modal.h3 [] [ text "Pop-up header" ]
+            |> Modal.body [] [ p [] [ text "This is a pop-up for you !"] ]
+            |> Modal.footer []
+                [ Button.button
+                    [ Button.outlinePrimary
+                    , Button.attrs [ onClick CloseModal ]
+                    ]
+                    [ text "Close" ]
+                ]
+            |> Modal.view model.modalVisibility
+        ]
 
     ]
+
+image h url = Slide.image [style "height" h, style "margin" "auto"] url
