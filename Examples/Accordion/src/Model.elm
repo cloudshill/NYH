@@ -17,12 +17,19 @@ import Bootstrap.Card.Block as Block
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 
+import Bootstrap.Modal as Modal
+
+import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
+
+
 type alias Model =
     { navKey : Navigation.Key
     , page : Page
     , navState : Navbar.State
     , accordionState : Accordion.State --ADD ACCORDION
     , carouselState : Carousel.State -- ADD CAROUSEL
+    , modalVisibility : Modal.Visibility -- ADD MODAL
     }
 
 type Page
@@ -37,3 +44,5 @@ type Msg
     | NoOp
     | AccordionMsg Accordion.State --ADD ACCORDION
     | CarouselMsg Carousel.Msg --ADD CAROUSEL
+    | CloseModal
+    | ShowModal
