@@ -17,6 +17,11 @@ import Task
 import Bootstrap.Accordion as Accordion
 import Bootstrap.Card.Block as Block
 
+--ADD CAROUSEL imports to main.elm, model.elm, and the page using carousel (ex. Home.elm)
+import Bootstrap.Carousel as Carousel
+import Bootstrap.Carousel.Slide as Slide
+
+
 import Model exposing(Model,Page(..),Msg(..))
 import Home
 
@@ -35,6 +40,7 @@ main =
         , onUrlChange = UrlChange
         }
 
+
 init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
 init flags url key =
     let
@@ -47,6 +53,7 @@ init flags url key =
                           , page = Home
                           , accordionState = Accordion.initialStateCardOpen "" --ADD ACCORDION - what does accordion look like when you open the page?
                             --Accordion.initialStateCardOpen "card1" -- if you put a card id, the accordion starts with that card open
+                          , carouselState = Carousel.initialState
                           }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
@@ -58,6 +65,7 @@ subscriptions model =
     --ADD ACCORDION - now that there are multiple subscriptions, they need to be grouped in Sub.batch
     Sub.batch [Navbar.subscriptions model.navState NavMsg
     , Accordion.subscriptions model.accordionState AccordionMsg
+    , Carousel.subscriptions model.carouselState CarouselMsg
     ]
 
 
@@ -89,6 +97,11 @@ update msg model =
             , Cmd.none
             )
 
+        --ADD CAROUSEL
+        CarouselMsg state ->
+            ( {model | carouselState = Carousel.update state model.carouselState }
+            , Cmd.none
+            )
 
 
 
