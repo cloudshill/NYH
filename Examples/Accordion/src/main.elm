@@ -21,13 +21,18 @@ import Bootstrap.Card.Block as Block
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 
+import Bootstrap.Modal as Modal
+
+import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
+
+
 
 import Model exposing(Model,Page(..),Msg(..))
 import Home
 
 type alias Flags =
     {}
-
 
 main : Program Flags Model Msg
 main =
@@ -54,6 +59,7 @@ init flags url key =
                           , accordionState = Accordion.initialStateCardOpen "" --ADD ACCORDION - what does accordion look like when you open the page?
                             --Accordion.initialStateCardOpen "card1" -- if you put a card id, the accordion starts with that card open
                           , carouselState = Carousel.initialState
+                          , modalVisibility = Modal.hidden
                           }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
@@ -103,6 +109,12 @@ update msg model =
             , Cmd.none
             )
 
+        --ADD MODAL
+        CloseModal ->
+            ( { model | modalVisibility = Modal.hidden } , Cmd.none )
+
+        ShowModal ->
+            ( { model | modalVisibility = Modal.shown } , Cmd.none )
 
 
 urlUpdate : Url -> Model -> ( Model, Cmd Msg )
