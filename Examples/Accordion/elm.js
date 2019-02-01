@@ -4327,6 +4327,52 @@ function _Browser_load(url)
 		}
 	}));
 }
+
+
+
+function _Time_now(millisToPosix)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(millisToPosix(Date.now())));
+	});
+}
+
+var _Time_setInterval = F2(function(interval, task)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
+		return function() { clearInterval(id); };
+	});
+});
+
+function _Time_here()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(
+			A2(elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
+		));
+	});
+}
+
+
+function _Time_getZoneName()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		try
+		{
+			var name = elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		}
+		catch (e)
+		{
+			var name = elm$time$Time$Offset(new Date().getTimezoneOffset());
+		}
+		callback(_Scheduler_succeed(name));
+	});
+}
 var author$project$Model$Home = {$: 'Home'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
@@ -5904,6 +5950,37 @@ var rundis$elm_bootstrap$Bootstrap$Accordion$initialStateCardOpen = function (id
 					A2(rundis$elm_bootstrap$Bootstrap$Accordion$CardState, rundis$elm_bootstrap$Bootstrap$Accordion$Shown, elm$core$Maybe$Nothing))
 				])));
 };
+var rundis$elm_bootstrap$Bootstrap$Carousel$Active = {$: 'Active'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$defaultStateOptions = {
+	cycling: rundis$elm_bootstrap$Bootstrap$Carousel$Active,
+	interval: elm$core$Maybe$Just(5000),
+	keyboard: true,
+	pauseOnHover: true,
+	startIndex: 0,
+	wrap: true
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$IgnoreHover = {$: 'IgnoreHover'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$NotAnimating = {$: 'NotAnimating'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$NotHovered = {$: 'NotHovered'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$State = F2(
+	function (a, b) {
+		return {$: 'State', a: a, b: b};
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$initialStateWithOptions = function (options) {
+	return A2(
+		rundis$elm_bootstrap$Bootstrap$Carousel$State,
+		rundis$elm_bootstrap$Bootstrap$Carousel$NotAnimating,
+		{
+			currentIndex: options.startIndex,
+			cycling: options.cycling,
+			hovering: options.pauseOnHover ? rundis$elm_bootstrap$Bootstrap$Carousel$NotHovered : rundis$elm_bootstrap$Bootstrap$Carousel$IgnoreHover,
+			interval: A2(elm$core$Maybe$withDefault, 0, options.interval),
+			keyboard: options.keyboard,
+			size: 2,
+			wrap: options.wrap
+		});
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$initialState = rundis$elm_bootstrap$Bootstrap$Carousel$initialStateWithOptions(rundis$elm_bootstrap$Bootstrap$Carousel$defaultStateOptions);
 var rundis$elm_bootstrap$Bootstrap$Navbar$Hidden = {$: 'Hidden'};
 var rundis$elm_bootstrap$Bootstrap$Navbar$State = function (a) {
 	return {$: 'State', a: a};
@@ -5951,6 +6028,7 @@ var author$project$Main$init = F3(
 			url,
 			{
 				accordionState: rundis$elm_bootstrap$Bootstrap$Accordion$initialStateCardOpen(''),
+				carouselState: rundis$elm_bootstrap$Bootstrap$Carousel$initialState,
 				navKey: key,
 				navState: navState,
 				page: author$project$Model$Home
@@ -5965,6 +6043,9 @@ var author$project$Main$init = F3(
 	});
 var author$project$Model$AccordionMsg = function (a) {
 	return {$: 'AccordionMsg', a: a};
+};
+var author$project$Model$CarouselMsg = function (a) {
+	return {$: 'CarouselMsg', a: a};
 };
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$browser$Browser$AnimationManager$Time = function (a) {
@@ -6193,64 +6274,18 @@ var rundis$elm_bootstrap$Bootstrap$Accordion$subscriptions = F2(
 				return toMsg(updState);
 			}) : elm$core$Platform$Sub$none;
 	});
-var elm$browser$Browser$Events$Window = {$: 'Window'};
-var elm$browser$Browser$Events$MySub = F3(
-	function (a, b, c) {
-		return {$: 'MySub', a: a, b: b, c: c};
+var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$Basics$not = _Basics_not;
+var elm$time$Time$Every = F2(
+	function (a, b) {
+		return {$: 'Every', a: a, b: b};
 	});
-var elm$browser$Browser$Events$State = F2(
-	function (subs, pids) {
-		return {pids: pids, subs: subs};
+var elm$time$Time$State = F2(
+	function (taggers, processes) {
+		return {processes: processes, taggers: taggers};
 	});
-var elm$browser$Browser$Events$init = elm$core$Task$succeed(
-	A2(elm$browser$Browser$Events$State, _List_Nil, elm$core$Dict$empty));
-var elm$browser$Browser$Events$nodeToKey = function (node) {
-	if (node.$ === 'Document') {
-		return 'd_';
-	} else {
-		return 'w_';
-	}
-};
-var elm$browser$Browser$Events$addKey = function (sub) {
-	var node = sub.a;
-	var name = sub.b;
-	return _Utils_Tuple2(
-		_Utils_ap(
-			elm$browser$Browser$Events$nodeToKey(node),
-			name),
-		sub);
-};
-var elm$browser$Browser$Events$Event = F2(
-	function (key, event) {
-		return {event: event, key: key};
-	});
-var elm$browser$Browser$Events$spawn = F3(
-	function (router, key, _n0) {
-		var node = _n0.a;
-		var name = _n0.b;
-		var actualNode = function () {
-			if (node.$ === 'Document') {
-				return _Browser_doc;
-			} else {
-				return _Browser_window;
-			}
-		}();
-		return A2(
-			elm$core$Task$map,
-			function (value) {
-				return _Utils_Tuple2(key, value);
-			},
-			A3(
-				_Browser_on,
-				actualNode,
-				name,
-				function (event) {
-					return A2(
-						elm$core$Platform$sendToSelf,
-						router,
-						A2(elm$browser$Browser$Events$Event, key, event));
-				}));
-	});
+var elm$time$Time$init = elm$core$Task$succeed(
+	A2(elm$time$Time$State, elm$core$Dict$empty, elm$core$Dict$empty));
 var elm$core$Dict$foldl = F3(
 	function (func, acc, dict) {
 		foldl:
@@ -6336,6 +6371,265 @@ var elm$core$Dict$merge = F6(
 				}),
 			intermediateResult,
 			leftovers);
+	});
+var elm$time$Time$addMySub = F2(
+	function (_n0, state) {
+		var interval = _n0.a;
+		var tagger = _n0.b;
+		var _n1 = A2(elm$core$Dict$get, interval, state);
+		if (_n1.$ === 'Nothing') {
+			return A3(
+				elm$core$Dict$insert,
+				interval,
+				_List_fromArray(
+					[tagger]),
+				state);
+		} else {
+			var taggers = _n1.a;
+			return A3(
+				elm$core$Dict$insert,
+				interval,
+				A2(elm$core$List$cons, tagger, taggers),
+				state);
+		}
+	});
+var elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var elm$time$Time$customZone = elm$time$Time$Zone;
+var elm$time$Time$setInterval = _Time_setInterval;
+var elm$time$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		if (!intervals.b) {
+			return elm$core$Task$succeed(processes);
+		} else {
+			var interval = intervals.a;
+			var rest = intervals.b;
+			var spawnTimer = elm$core$Process$spawn(
+				A2(
+					elm$time$Time$setInterval,
+					interval,
+					A2(elm$core$Platform$sendToSelf, router, interval)));
+			var spawnRest = function (id) {
+				return A3(
+					elm$time$Time$spawnHelp,
+					router,
+					rest,
+					A3(elm$core$Dict$insert, interval, id, processes));
+			};
+			return A2(elm$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var elm$time$Time$onEffects = F3(
+	function (router, subs, _n0) {
+		var processes = _n0.processes;
+		var rightStep = F3(
+			function (_n6, id, _n7) {
+				var spawns = _n7.a;
+				var existing = _n7.b;
+				var kills = _n7.c;
+				return _Utils_Tuple3(
+					spawns,
+					existing,
+					A2(
+						elm$core$Task$andThen,
+						function (_n5) {
+							return kills;
+						},
+						elm$core$Process$kill(id)));
+			});
+		var newTaggers = A3(elm$core$List$foldl, elm$time$Time$addMySub, elm$core$Dict$empty, subs);
+		var leftStep = F3(
+			function (interval, taggers, _n4) {
+				var spawns = _n4.a;
+				var existing = _n4.b;
+				var kills = _n4.c;
+				return _Utils_Tuple3(
+					A2(elm$core$List$cons, interval, spawns),
+					existing,
+					kills);
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _n3) {
+				var spawns = _n3.a;
+				var existing = _n3.b;
+				var kills = _n3.c;
+				return _Utils_Tuple3(
+					spawns,
+					A3(elm$core$Dict$insert, interval, id, existing),
+					kills);
+			});
+		var _n1 = A6(
+			elm$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			processes,
+			_Utils_Tuple3(
+				_List_Nil,
+				elm$core$Dict$empty,
+				elm$core$Task$succeed(_Utils_Tuple0)));
+		var spawnList = _n1.a;
+		var existingDict = _n1.b;
+		var killTask = _n1.c;
+		return A2(
+			elm$core$Task$andThen,
+			function (newProcesses) {
+				return elm$core$Task$succeed(
+					A2(elm$time$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				elm$core$Task$andThen,
+				function (_n2) {
+					return A3(elm$time$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
+var elm$time$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _n0 = A2(elm$core$Dict$get, interval, state.taggers);
+		if (_n0.$ === 'Nothing') {
+			return elm$core$Task$succeed(state);
+		} else {
+			var taggers = _n0.a;
+			var tellTaggers = function (time) {
+				return elm$core$Task$sequence(
+					A2(
+						elm$core$List$map,
+						function (tagger) {
+							return A2(
+								elm$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						taggers));
+			};
+			return A2(
+				elm$core$Task$andThen,
+				function (_n1) {
+					return elm$core$Task$succeed(state);
+				},
+				A2(elm$core$Task$andThen, tellTaggers, elm$time$Time$now));
+		}
+	});
+var elm$time$Time$subMap = F2(
+	function (f, _n0) {
+		var interval = _n0.a;
+		var tagger = _n0.b;
+		return A2(
+			elm$time$Time$Every,
+			interval,
+			A2(elm$core$Basics$composeL, f, tagger));
+	});
+_Platform_effectManagers['Time'] = _Platform_createManager(elm$time$Time$init, elm$time$Time$onEffects, elm$time$Time$onSelfMsg, 0, elm$time$Time$subMap);
+var elm$time$Time$subscription = _Platform_leaf('Time');
+var elm$time$Time$every = F2(
+	function (interval, tagger) {
+		return elm$time$Time$subscription(
+			A2(elm$time$Time$Every, interval, tagger));
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$Hovered = {$: 'Hovered'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$Next = {$: 'Next'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$SetAnimating = {$: 'SetAnimating'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$StartTransition = function (a) {
+	return {$: 'StartTransition', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$subscriptions = F2(
+	function (model, toMsg) {
+		switch (model.a.$) {
+			case 'NotAnimating':
+				var _n1 = model.a;
+				var interval = model.b.interval;
+				var cycling = model.b.cycling;
+				var wrap = model.b.wrap;
+				var currentIndex = model.b.currentIndex;
+				var hovering = model.b.hovering;
+				var size = model.b.size;
+				var atEnd = (!wrap) && _Utils_eq(currentIndex, size - 1);
+				return (_Utils_eq(cycling, rundis$elm_bootstrap$Bootstrap$Carousel$Active) && ((!_Utils_eq(hovering, rundis$elm_bootstrap$Bootstrap$Carousel$Hovered)) && (interval && (!atEnd)))) ? A2(
+					elm$time$Time$every,
+					interval,
+					function (_n2) {
+						return toMsg(
+							rundis$elm_bootstrap$Bootstrap$Carousel$StartTransition(rundis$elm_bootstrap$Bootstrap$Carousel$Next));
+					}) : elm$core$Platform$Sub$none;
+			case 'Start':
+				var transition = model.a.a;
+				return elm$browser$Browser$Events$onAnimationFrame(
+					function (_n3) {
+						return toMsg(rundis$elm_bootstrap$Bootstrap$Carousel$SetAnimating);
+					});
+			default:
+				var transition = model.a.a;
+				return elm$core$Platform$Sub$none;
+		}
+	});
+var elm$browser$Browser$Events$Window = {$: 'Window'};
+var elm$browser$Browser$Events$MySub = F3(
+	function (a, b, c) {
+		return {$: 'MySub', a: a, b: b, c: c};
+	});
+var elm$browser$Browser$Events$State = F2(
+	function (subs, pids) {
+		return {pids: pids, subs: subs};
+	});
+var elm$browser$Browser$Events$init = elm$core$Task$succeed(
+	A2(elm$browser$Browser$Events$State, _List_Nil, elm$core$Dict$empty));
+var elm$browser$Browser$Events$nodeToKey = function (node) {
+	if (node.$ === 'Document') {
+		return 'd_';
+	} else {
+		return 'w_';
+	}
+};
+var elm$browser$Browser$Events$addKey = function (sub) {
+	var node = sub.a;
+	var name = sub.b;
+	return _Utils_Tuple2(
+		_Utils_ap(
+			elm$browser$Browser$Events$nodeToKey(node),
+			name),
+		sub);
+};
+var elm$browser$Browser$Events$Event = F2(
+	function (key, event) {
+		return {event: event, key: key};
+	});
+var elm$browser$Browser$Events$spawn = F3(
+	function (router, key, _n0) {
+		var node = _n0.a;
+		var name = _n0.b;
+		var actualNode = function () {
+			if (node.$ === 'Document') {
+				return _Browser_doc;
+			} else {
+				return _Browser_window;
+			}
+		}();
+		return A2(
+			elm$core$Task$map,
+			function (value) {
+				return _Utils_Tuple2(key, value);
+			},
+			A3(
+				_Browser_on,
+				actualNode,
+				name,
+				function (event) {
+					return A2(
+						elm$core$Platform$sendToSelf,
+						router,
+						A2(elm$browser$Browser$Events$Event, key, event));
+				}));
 	});
 var elm$core$Dict$union = F2(
 	function (t1, t2) {
@@ -6594,7 +6888,8 @@ var author$project$Main$subscriptions = function (model) {
 		_List_fromArray(
 			[
 				A2(rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions, model.navState, author$project$Model$NavMsg),
-				A2(rundis$elm_bootstrap$Bootstrap$Accordion$subscriptions, model.accordionState, author$project$Model$AccordionMsg)
+				A2(rundis$elm_bootstrap$Bootstrap$Accordion$subscriptions, model.accordionState, author$project$Model$AccordionMsg),
+				A2(rundis$elm_bootstrap$Bootstrap$Carousel$subscriptions, model.carouselState, author$project$Model$CarouselMsg)
 			]));
 };
 var elm$browser$Browser$Navigation$load = _Browser_load;
@@ -6644,6 +6939,132 @@ var elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var rundis$elm_bootstrap$Bootstrap$Carousel$Animating = function (a) {
+	return {$: 'Animating', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$Paused = {$: 'Paused'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$Start = function (a) {
+	return {$: 'Start', a: a};
+};
+var elm$core$Basics$modBy = _Basics_modBy;
+var rundis$elm_bootstrap$Bootstrap$Carousel$nextIndex = F3(
+	function (stage, currentIndex, size) {
+		var helper = function (transition) {
+			switch (transition.$) {
+				case 'Next':
+					return A2(elm$core$Basics$modBy, size, currentIndex + 1);
+				case 'Prev':
+					return A2(elm$core$Basics$modBy, size, currentIndex - 1);
+				default:
+					var m = transition.a;
+					return A2(elm$core$Basics$modBy, size, m);
+			}
+		};
+		switch (stage.$) {
+			case 'Start':
+				var transition = stage.a;
+				return helper(transition);
+			case 'Animating':
+				var transition = stage.a;
+				return helper(transition);
+			default:
+				return currentIndex;
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$update = F2(
+	function (message, model) {
+		var tstage = model.a;
+		var settings = model.b;
+		var currentIndex = settings.currentIndex;
+		var size = settings.size;
+		switch (message.$) {
+			case 'Pause':
+				return A2(
+					rundis$elm_bootstrap$Bootstrap$Carousel$State,
+					tstage,
+					_Utils_update(
+						settings,
+						{cycling: rundis$elm_bootstrap$Bootstrap$Carousel$Paused}));
+			case 'Cycle':
+				return A2(
+					rundis$elm_bootstrap$Bootstrap$Carousel$State,
+					tstage,
+					_Utils_update(
+						settings,
+						{cycling: rundis$elm_bootstrap$Bootstrap$Carousel$Active}));
+			case 'SetHover':
+				var hovering = message.a;
+				return A2(
+					rundis$elm_bootstrap$Bootstrap$Carousel$State,
+					tstage,
+					_Utils_update(
+						settings,
+						{hovering: hovering}));
+			case 'StartTransition':
+				var transition = message.a;
+				var newSettings = function () {
+					var _n2 = settings.cycling;
+					if (_n2.$ === 'WaitForUser') {
+						return _Utils_update(
+							settings,
+							{cycling: rundis$elm_bootstrap$Bootstrap$Carousel$Active});
+					} else {
+						return settings;
+					}
+				}();
+				if (tstage.$ === 'NotAnimating') {
+					return (!_Utils_eq(
+						A3(
+							rundis$elm_bootstrap$Bootstrap$Carousel$nextIndex,
+							rundis$elm_bootstrap$Bootstrap$Carousel$Start(transition),
+							currentIndex,
+							size),
+						currentIndex)) ? A2(
+						rundis$elm_bootstrap$Bootstrap$Carousel$State,
+						rundis$elm_bootstrap$Bootstrap$Carousel$Start(transition),
+						newSettings) : A2(rundis$elm_bootstrap$Bootstrap$Carousel$State, tstage, newSettings);
+				} else {
+					return A2(rundis$elm_bootstrap$Bootstrap$Carousel$State, tstage, newSettings);
+				}
+			case 'SetAnimating':
+				switch (tstage.$) {
+					case 'NotAnimating':
+						return model;
+					case 'Start':
+						var transition = tstage.a;
+						return A2(
+							rundis$elm_bootstrap$Bootstrap$Carousel$State,
+							rundis$elm_bootstrap$Bootstrap$Carousel$Animating(transition),
+							settings);
+					default:
+						var transition = tstage.a;
+						return A2(
+							rundis$elm_bootstrap$Bootstrap$Carousel$State,
+							rundis$elm_bootstrap$Bootstrap$Carousel$Animating(transition),
+							settings);
+				}
+			default:
+				var size_ = message.a;
+				if (tstage.$ === 'NotAnimating') {
+					return A2(
+						rundis$elm_bootstrap$Bootstrap$Carousel$State,
+						rundis$elm_bootstrap$Bootstrap$Carousel$NotAnimating,
+						_Utils_update(
+							settings,
+							{size: size_}));
+				} else {
+					return A2(
+						rundis$elm_bootstrap$Bootstrap$Carousel$State,
+						rundis$elm_bootstrap$Bootstrap$Carousel$NotAnimating,
+						_Utils_update(
+							settings,
+							{
+								currentIndex: A3(rundis$elm_bootstrap$Bootstrap$Carousel$nextIndex, tstage, currentIndex, size),
+								size: size
+							}));
+				}
+		}
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6675,12 +7096,21 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'NoOp':
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			default:
+			case 'AccordionMsg':
 				var state = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{accordionState: state}),
+					elm$core$Platform$Cmd$none);
+			default:
+				var state = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							carouselState: A2(rundis$elm_bootstrap$Bootstrap$Carousel$update, state, model.carouselState)
+						}),
 					elm$core$Platform$Cmd$none);
 		}
 	});
@@ -7340,6 +7770,448 @@ var rundis$elm_bootstrap$Bootstrap$Card$Block$text = F2(
 					attributes),
 				children));
 	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$Config = function (a) {
+	return {$: 'Config', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$config = F2(
+	function (toMsg, attributes) {
+		return rundis$elm_bootstrap$Bootstrap$Carousel$Config(
+			{attributes: attributes, controls: false, indicators: false, slides: _List_Nil, toMsg: toMsg});
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$slides = F2(
+	function (newSlides, _n0) {
+		var settings = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Carousel$Config(
+			_Utils_update(
+				settings,
+				{slides: newSlides}));
+	});
+var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var elm$html$Html$map = elm$virtual_dom$VirtualDom$map;
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onMouseEnter = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'mouseenter',
+		elm$json$Json$Decode$succeed(msg));
+};
+var elm$html$Html$Events$onMouseLeave = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'mouseleave',
+		elm$json$Json$Decode$succeed(msg));
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$EndTransition = function (a) {
+	return {$: 'EndTransition', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$SetHover = function (a) {
+	return {$: 'SetHover', a: a};
+};
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$controlNext = A2(
+	elm$html$Html$button,
+	_List_fromArray(
+		[
+			elm$html$Html$Attributes$class('btn btn-link carousel-control-next'),
+			A2(elm$html$Html$Attributes$attribute, 'role', 'button'),
+			elm$html$Html$Events$onClick(
+			rundis$elm_bootstrap$Bootstrap$Carousel$StartTransition(rundis$elm_bootstrap$Bootstrap$Carousel$Next))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$span,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('carousel-control-next-icon'),
+					A2(elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
+				]),
+			_List_Nil),
+			A2(
+			elm$html$Html$span,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('sr-only')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('Next')
+				]))
+		]));
+var rundis$elm_bootstrap$Bootstrap$Carousel$Prev = {$: 'Prev'};
+var rundis$elm_bootstrap$Bootstrap$Carousel$controlPrev = A2(
+	elm$html$Html$button,
+	_List_fromArray(
+		[
+			elm$html$Html$Attributes$class('btn btn-link carousel-control-prev'),
+			elm$html$Html$Events$onClick(
+			rundis$elm_bootstrap$Bootstrap$Carousel$StartTransition(rundis$elm_bootstrap$Bootstrap$Carousel$Prev))
+		]),
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$span,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('carousel-control-prev-icon'),
+					A2(elm$html$Html$Attributes$attribute, 'aria-hidden', 'true')
+				]),
+			_List_Nil),
+			A2(
+			elm$html$Html$span,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('sr-only')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('Previous')
+				]))
+		]));
+var elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
+	return _VirtualDom_keyedNode(
+		_VirtualDom_noScript(tag));
+};
+var elm$html$Html$Keyed$node = elm$virtual_dom$VirtualDom$keyedNode;
+var rundis$elm_bootstrap$Bootstrap$Carousel$dirtyHack = function (size) {
+	return A3(
+		elm$html$Html$Keyed$node,
+		'div',
+		_List_Nil,
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'dirtyHack',
+				A2(
+					elm$html$Html$img,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$Events$on,
+							'load',
+							elm$json$Json$Decode$succeed(
+								rundis$elm_bootstrap$Bootstrap$Carousel$EndTransition(size))),
+							elm$html$Html$Attributes$src('https://package.elm-lang.org/assets/favicon.ico'),
+							A2(elm$html$Html$Attributes$style, 'display', 'none')
+						]),
+					_List_Nil))
+			]));
+};
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$ol = _VirtualDom_node('ol');
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$Number = function (a) {
+	return {$: 'Number', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$indicators = F2(
+	function (size, activeIndex) {
+		var item = function (n) {
+			return A2(
+				elm$html$Html$li,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'active',
+								_Utils_eq(n, activeIndex))
+							])),
+						elm$html$Html$Events$onClick(
+						rundis$elm_bootstrap$Bootstrap$Carousel$StartTransition(
+							rundis$elm_bootstrap$Bootstrap$Carousel$Number(n)))
+					]),
+				_List_Nil);
+		};
+		var items = A2(
+			elm$core$List$map,
+			item,
+			A2(elm$core$List$range, 0, size - 1));
+		return A2(
+			elm$html$Html$ol,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('carousel-indicators')
+				]),
+			items);
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$transitionClassNames = F2(
+	function (currentIndex, transition) {
+		var base = 'carousel-item';
+		var leftNext = {directionalClassName: base + '-left', orderClassName: base + '-next'};
+		var rightPrev = {directionalClassName: base + '-right', orderClassName: base + '-prev'};
+		switch (transition.$) {
+			case 'Next':
+				return leftNext;
+			case 'Number':
+				var n = transition.a;
+				return (_Utils_cmp(n, currentIndex) > 0) ? leftNext : rightPrev;
+			default:
+				return rightPrev;
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$transitionClasses = F4(
+	function (index, currentIndex, newIndex, tstage) {
+		if (_Utils_eq(index, currentIndex)) {
+			switch (tstage.$) {
+				case 'NotAnimating':
+					return _List_fromArray(
+						[
+							_Utils_Tuple2('active', true)
+						]);
+				case 'Start':
+					var transition = tstage.a;
+					return _List_fromArray(
+						[
+							_Utils_Tuple2('active', true)
+						]);
+				default:
+					var transition = tstage.a;
+					var _n1 = A2(rundis$elm_bootstrap$Bootstrap$Carousel$transitionClassNames, currentIndex, transition);
+					var directionalClassName = _n1.directionalClassName;
+					return _List_fromArray(
+						[
+							_Utils_Tuple2('active', true),
+							_Utils_Tuple2(directionalClassName, true)
+						]);
+			}
+		} else {
+			if (_Utils_eq(index, newIndex)) {
+				switch (tstage.$) {
+					case 'NotAnimating':
+						return _List_Nil;
+					case 'Start':
+						var transition = tstage.a;
+						return _List_fromArray(
+							[
+								_Utils_Tuple2(
+								function ($) {
+									return $.orderClassName;
+								}(
+									A2(rundis$elm_bootstrap$Bootstrap$Carousel$transitionClassNames, currentIndex, transition)),
+								true)
+							]);
+					default:
+						var transition = tstage.a;
+						var _n3 = A2(rundis$elm_bootstrap$Bootstrap$Carousel$transitionClassNames, currentIndex, transition);
+						var directionalClassName = _n3.directionalClassName;
+						var orderClassName = _n3.orderClassName;
+						return _List_fromArray(
+							[
+								_Utils_Tuple2(directionalClassName, true),
+								_Utils_Tuple2(orderClassName, true)
+							]);
+				}
+			} else {
+				return _List_Nil;
+			}
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$Config = function (a) {
+	return {$: 'Config', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$addAttributes = F2(
+	function (newAttributes, _n0) {
+		var settings = _n0.a;
+		return rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$Config(
+			_Utils_update(
+				settings,
+				{
+					attributes: _Utils_ap(settings.attributes, newAttributes)
+				}));
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$view = function (_n0) {
+	var attributes = _n0.a.attributes;
+	var content = _n0.a.content;
+	var caption = _n0.a.caption;
+	var captionHtml = function () {
+		if (caption.$ === 'Nothing') {
+			return elm$html$Html$text('');
+		} else {
+			var rec = caption.a;
+			return A2(
+				elm$html$Html$div,
+				_Utils_ap(
+					rec.attributes,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('carousel-caption d-none d-md-block')
+						])),
+				rec.children);
+		}
+	}();
+	return A2(
+		elm$html$Html$div,
+		_Utils_ap(
+			attributes,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('carousel-item')
+				])),
+		function () {
+			if (content.$ === 'Image') {
+				var rec = content.a;
+				return _List_fromArray(
+					[
+						A2(
+						elm$html$Html$img,
+						_Utils_ap(
+							rec.attributes,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('d-block img-fluid'),
+									elm$html$Html$Attributes$src(rec.src)
+								])),
+						_List_Nil),
+						captionHtml
+					]);
+			} else {
+				var html = content.a.html;
+				return _List_fromArray(
+					[html, captionHtml]);
+			}
+		}());
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$viewSlide = F3(
+	function (model, index, slide) {
+		var tstage = model.a;
+		var currentIndex = model.b.currentIndex;
+		var size = model.b.size;
+		var newIndex = A3(rundis$elm_bootstrap$Bootstrap$Carousel$nextIndex, tstage, currentIndex, size);
+		return rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$view(
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$addAttributes,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$classList(
+						A4(rundis$elm_bootstrap$Bootstrap$Carousel$transitionClasses, index, currentIndex, newIndex, tstage))
+					]),
+				slide));
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$view = F2(
+	function (model, _n0) {
+		var tstage = model.a;
+		var hovering = model.b.hovering;
+		var currentIndex = model.b.currentIndex;
+		var wrap = model.b.wrap;
+		var settings = _n0.a;
+		var slidesHtml = A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('carousel-inner'),
+					A2(elm$html$Html$Attributes$attribute, 'role', 'listbox')
+				]),
+			A2(
+				elm$core$List$indexedMap,
+				rundis$elm_bootstrap$Bootstrap$Carousel$viewSlide(model),
+				settings.slides));
+		var size = elm$core$List$length(settings.slides);
+		var indicatorsHtml = settings.indicators ? A2(
+			rundis$elm_bootstrap$Bootstrap$Carousel$indicators,
+			size,
+			A3(rundis$elm_bootstrap$Bootstrap$Carousel$nextIndex, tstage, currentIndex, size)) : elm$html$Html$text('');
+		var defaultCarouselAttributes = _Utils_ap(
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('carousel slide'),
+					A2(
+					elm$html$Html$Events$on,
+					'transitionend',
+					elm$json$Json$Decode$succeed(
+						settings.toMsg(
+							rundis$elm_bootstrap$Bootstrap$Carousel$EndTransition(size))))
+				]),
+			(!_Utils_eq(hovering, rundis$elm_bootstrap$Bootstrap$Carousel$IgnoreHover)) ? _List_fromArray(
+				[
+					elm$html$Html$Events$onMouseEnter(
+					settings.toMsg(
+						rundis$elm_bootstrap$Bootstrap$Carousel$SetHover(rundis$elm_bootstrap$Bootstrap$Carousel$Hovered))),
+					elm$html$Html$Events$onMouseLeave(
+					settings.toMsg(
+						rundis$elm_bootstrap$Bootstrap$Carousel$SetHover(rundis$elm_bootstrap$Bootstrap$Carousel$NotHovered)))
+				]) : _List_Nil);
+		var controlsHtml = settings.controls ? ((wrap || (currentIndex && (!_Utils_eq(currentIndex, size - 1)))) ? _List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Carousel$controlPrev, rundis$elm_bootstrap$Bootstrap$Carousel$controlNext]) : ((!currentIndex) ? _List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Carousel$controlNext]) : _List_fromArray(
+			[rundis$elm_bootstrap$Bootstrap$Carousel$controlPrev]))) : _List_Nil;
+		return A2(
+			elm$html$Html$div,
+			_Utils_ap(settings.attributes, defaultCarouselAttributes),
+			A2(
+				elm$core$List$cons,
+				slidesHtml,
+				A2(
+					elm$core$List$map,
+					elm$html$Html$map(settings.toMsg),
+					_Utils_ap(
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Carousel$dirtyHack(size),
+								indicatorsHtml
+							]),
+						controlsHtml))));
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config = F2(
+	function (attributes, content) {
+		return rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$Config(
+			{attributes: attributes, caption: elm$core$Maybe$Nothing, content: content});
+	});
+var rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$Image = function (a) {
+	return {$: 'Image', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Carousel$Slide$image = F2(
+	function (attributes, src) {
+		return rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$Image(
+			{attributes: attributes, src: src});
+	});
 var rundis$elm_bootstrap$Bootstrap$Grid$Column = function (a) {
 	return {$: 'Column', a: a};
 };
@@ -7348,11 +8220,6 @@ var rundis$elm_bootstrap$Bootstrap$Grid$col = F2(
 		return rundis$elm_bootstrap$Bootstrap$Grid$Column(
 			{children: children, options: options});
 	});
-var elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
-	return _VirtualDom_keyedNode(
-		_VirtualDom_noScript(tag));
-};
-var elm$html$Html$Keyed$node = elm$virtual_dom$VirtualDom$keyedNode;
 var rundis$elm_bootstrap$Bootstrap$General$Internal$XS = {$: 'XS'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col = {$: 'Col'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width = F2(
@@ -8637,7 +9504,28 @@ var author$project$Home$page = function (model) {
 								rundis$elm_bootstrap$Bootstrap$Accordion$withAnimation(
 									rundis$elm_bootstrap$Bootstrap$Accordion$config(author$project$Model$AccordionMsg))))
 						]))
-				]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Carousel$view,
+			model.carouselState,
+			A2(
+				rundis$elm_bootstrap$Bootstrap$Carousel$slides,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config,
+						_List_Nil,
+						A2(rundis$elm_bootstrap$Bootstrap$Carousel$Slide$image, _List_Nil, 'grad-cap.png')),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config,
+						_List_Nil,
+						A2(rundis$elm_bootstrap$Bootstrap$Carousel$Slide$image, _List_Nil, 'school.png')),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config,
+						_List_Nil,
+						A2(rundis$elm_bootstrap$Bootstrap$Carousel$Slide$image, _List_Nil, 'assets/img3.jpg'))
+					]),
+				A2(rundis$elm_bootstrap$Bootstrap$Carousel$config, author$project$Model$CarouselMsg, _List_Nil)))
 		]);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4 = elm$html$Html$Attributes$class('my-4');
