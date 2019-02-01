@@ -17,6 +17,8 @@ import Bootstrap.Card.Block as Block
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 
+--ADD TAB imports to main.elm, model.elm, and the page using carousel (ex. Home.elm)
+import Bootstrap.Tab as Tab
 
 
 import Model exposing (Model,Msg(..))
@@ -163,12 +165,5 @@ page model =
                 |> Accordion.view model.accordionState
             ]
         ]
-        ,Carousel.config CarouselMsg []
-                |> Carousel.slides
-                    [ Slide.config [] (Slide.image [] "grad-cap.png")
-                    , Slide.config [] (Slide.image [] "school.png")
-                    , Slide.config [] (Slide.image [] "assets/img3.jpg")
-                    ]
-                |> Carousel.view model.carouselState
 
     ]

@@ -21,6 +21,8 @@ import Bootstrap.Card.Block as Block
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 
+--ADD TAB imports to main.elm, model.elm, and the page using carousel (ex. Home.elm)
+import Bootstrap.Tab as Tab
 
 import Model exposing(Model,Page(..),Msg(..))
 import Home
@@ -53,7 +55,8 @@ init flags url key =
                           , page = Home
                           , accordionState = Accordion.initialStateCardOpen "" --ADD ACCORDION - what does accordion look like when you open the page?
                             --Accordion.initialStateCardOpen "card1" -- if you put a card id, the accordion starts with that card open
-                          , carouselState = Carousel.initialState
+                          , carouselState = Carousel.initialState --ADD CAROUSEL
+                          , tabState = Tab.initialState --ADD TAB
                           }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
@@ -103,6 +106,11 @@ update msg model =
             , Cmd.none
             )
 
+        --ADD TAB
+        TabMsg state ->
+            ( { model | tabState = state }
+            , Cmd.none
+            )
 
 
 urlUpdate : Url -> Model -> ( Model, Cmd Msg )
