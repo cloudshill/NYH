@@ -173,7 +173,7 @@ page model =
         ,Carousel.config CarouselMsg [style "height" "500px"]
                 |> Carousel.slides
                     [ Slide.config [] (image "500px" "https://c1.staticflickr.com/8/7018/6446600053_14c322b898_b.jpg")
-                    , Slide.config [] (image "500px" "img/sports.jpg")
+                    , Slide.config [] (image "500px" "https://cschank.github.io/Surfer.jpg")
                     ]
                 |> Carousel.withControls
                 |> Carousel.withIndicators
