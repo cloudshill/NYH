@@ -6020,12 +6020,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$initialState = function (toMsg) {
 		state,
 		A2(rundis$elm_bootstrap$Bootstrap$Navbar$initWindowSize, toMsg, state));
 };
-var rundis$elm_bootstrap$Bootstrap$Tab$Showing = {$: 'Showing'};
-var rundis$elm_bootstrap$Bootstrap$Tab$State = function (a) {
-	return {$: 'State', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$initialState = rundis$elm_bootstrap$Bootstrap$Tab$State(
-	{activeTab: elm$core$Maybe$Nothing, visibility: rundis$elm_bootstrap$Bootstrap$Tab$Showing});
 var author$project$Main$init = F3(
 	function (flags, url, key) {
 		var _n0 = rundis$elm_bootstrap$Bootstrap$Navbar$initialState(author$project$Model$NavMsg);
@@ -6040,8 +6034,7 @@ var author$project$Main$init = F3(
 				modalVisibility: rundis$elm_bootstrap$Bootstrap$Modal$hidden,
 				navKey: key,
 				navState: navState,
-				page: author$project$Model$Home,
-				tabState: rundis$elm_bootstrap$Bootstrap$Tab$initialState
+				page: author$project$Model$Home
 			});
 		var model = _n1.a;
 		var urlCmd = _n1.b;
@@ -7124,7 +7117,6 @@ var author$project$Main$update = F2(
 							carouselState: A2(rundis$elm_bootstrap$Bootstrap$Carousel$update, state, model.carouselState)
 						}),
 					elm$core$Platform$Cmd$none);
-<<<<<<< HEAD
 			case 'CloseModal':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -7162,20 +7154,6 @@ var author$project$Home$image = F2(
 	});
 var author$project$Model$CloseModal = {$: 'CloseModal'};
 var author$project$Model$ShowModal = {$: 'ShowModal'};
-=======
-			default:
-				var state = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{tabState: state}),
-					elm$core$Platform$Cmd$none);
-		}
-	});
-var author$project$Model$TabMsg = function (a) {
-	return {$: 'TabMsg', a: a};
-};
->>>>>>> 2ea6de27bffe74dbbade3db8e66a1da1de6e6c28
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
@@ -7830,7 +7808,6 @@ var rundis$elm_bootstrap$Bootstrap$Accordion$withAnimation = function (_n0) {
 			configRec,
 			{withAnimation: true}));
 };
-<<<<<<< HEAD
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 'Attrs', a: a};
 };
@@ -8009,8 +7986,6 @@ var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
 var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
 	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
-=======
->>>>>>> 2ea6de27bffe74dbbade3db8e66a1da1de6e6c28
 var rundis$elm_bootstrap$Bootstrap$Card$Internal$BlockItem = function (a) {
 	return {$: 'BlockItem', a: a};
 };
@@ -8027,7 +8002,6 @@ var rundis$elm_bootstrap$Bootstrap$Card$Block$text = F2(
 					attributes),
 				children));
 	});
-<<<<<<< HEAD
 var rundis$elm_bootstrap$Bootstrap$Carousel$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -8435,8 +8409,6 @@ var rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config = F2(
 		return rundis$elm_bootstrap$Bootstrap$Carousel$SlideInternal$Config(
 			{attributes: attributes, caption: elm$core$Maybe$Nothing, content: content});
 	});
-=======
->>>>>>> 2ea6de27bffe74dbbade3db8e66a1da1de6e6c28
 var rundis$elm_bootstrap$Bootstrap$Grid$Column = function (a) {
 	return {$: 'Column', a: a};
 };
@@ -8445,11 +8417,6 @@ var rundis$elm_bootstrap$Bootstrap$Grid$col = F2(
 		return rundis$elm_bootstrap$Bootstrap$Grid$Column(
 			{children: children, options: options});
 	});
-var elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
-	return _VirtualDom_keyedNode(
-		_VirtualDom_noScript(tag));
-};
-var elm$html$Html$Keyed$node = elm$virtual_dom$VirtualDom$keyedNode;
 var rundis$elm_bootstrap$Bootstrap$General$Internal$XS = {$: 'XS'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col = {$: 'Col'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width = F2(
@@ -9251,7 +9218,6 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$RowAttrs = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Grid$Row$attrs = function (attrs_) {
 	return rundis$elm_bootstrap$Bootstrap$Grid$Internal$RowAttrs(attrs_);
 };
-<<<<<<< HEAD
 var rundis$elm_bootstrap$Bootstrap$Modal$Body = function (a) {
 	return {$: 'Body', a: a};
 };
@@ -9547,262 +9513,12 @@ var rundis$elm_bootstrap$Bootstrap$Modal$modalClass = function (size) {
 	}
 };
 var rundis$elm_bootstrap$Bootstrap$Modal$modalAttributes = function (options) {
-=======
-var rundis$elm_bootstrap$Bootstrap$Tab$Config = function (a) {
-	return {$: 'Config', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$config = function (toMsg) {
-	return rundis$elm_bootstrap$Bootstrap$Tab$Config(
-		{attributes: _List_Nil, isPill: false, items: _List_Nil, layout: elm$core$Maybe$Nothing, toMsg: toMsg, useHash: false, withAnimation: false});
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$Item = function (a) {
-	return {$: 'Item', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$item = function (rec) {
-	return rundis$elm_bootstrap$Bootstrap$Tab$Item(
-		{id: rec.id, link: rec.link, pane: rec.pane});
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$items = F2(
-	function (items_, _n0) {
-		var configRec = _n0.a;
-		return rundis$elm_bootstrap$Bootstrap$Tab$Config(
-			_Utils_update(
-				configRec,
-				{items: items_}));
-	});
-var rundis$elm_bootstrap$Bootstrap$Tab$Link = function (a) {
-	return {$: 'Link', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$link = F2(
-	function (attributes, children) {
-		return rundis$elm_bootstrap$Bootstrap$Tab$Link(
-			{attributes: attributes, children: children});
-	});
-var rundis$elm_bootstrap$Bootstrap$Tab$Pane = function (a) {
-	return {$: 'Pane', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$pane = F2(
-	function (attributes, children) {
-		return rundis$elm_bootstrap$Bootstrap$Tab$Pane(
-			{attributes: attributes, children: children});
-	});
-var elm$html$Html$ul = _VirtualDom_node('ul');
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return elm$core$Maybe$Just(x);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$getActiveItem = F2(
-	function (_n0, configRec) {
-		var activeTab = _n0.a.activeTab;
-		if (activeTab.$ === 'Nothing') {
-			return elm$core$List$head(configRec.items);
-		} else {
-			var id = activeTab.a;
-			return function (found) {
-				if (found.$ === 'Just') {
-					var f = found.a;
-					return elm$core$Maybe$Just(f);
-				} else {
-					return elm$core$List$head(configRec.items);
-				}
-			}(
-				elm$core$List$head(
-					A2(
-						elm$core$List$filter,
-						function (_n2) {
-							var item_ = _n2.a;
-							return _Utils_eq(item_.id, id);
-						},
-						configRec.items)));
-		}
-	});
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$core$Tuple$second = function (_n0) {
-	var y = _n0.b;
-	return y;
-};
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$Hidden = {$: 'Hidden'};
-var rundis$elm_bootstrap$Bootstrap$Tab$Start = {$: 'Start'};
-var rundis$elm_bootstrap$Bootstrap$Tab$visibilityTransition = F2(
-	function (withAnimation_, visibility) {
-		var _n0 = _Utils_Tuple2(withAnimation_, visibility);
-		_n0$2:
-		while (true) {
-			if (_n0.a) {
-				switch (_n0.b.$) {
-					case 'Hidden':
-						var _n1 = _n0.b;
-						return rundis$elm_bootstrap$Bootstrap$Tab$Start;
-					case 'Start':
-						var _n2 = _n0.b;
-						return rundis$elm_bootstrap$Bootstrap$Tab$Showing;
-					default:
-						break _n0$2;
-				}
-			} else {
-				break _n0$2;
-			}
-		}
-		return rundis$elm_bootstrap$Bootstrap$Tab$Showing;
-	});
-var rundis$elm_bootstrap$Bootstrap$Tab$renderLink = F4(
-	function (id, active, _n0, configRec) {
-		var attributes = _n0.a.attributes;
-		var children = _n0.a.children;
-		var commonClasses = _List_fromArray(
-			[
-				_Utils_Tuple2('nav-link', true),
-				_Utils_Tuple2('active', active)
-			]);
-		var clickHandler = elm$html$Html$Events$onClick(
-			configRec.toMsg(
-				rundis$elm_bootstrap$Bootstrap$Tab$State(
-					{
-						activeTab: elm$core$Maybe$Just(id),
-						visibility: A2(rundis$elm_bootstrap$Bootstrap$Tab$visibilityTransition, configRec.withAnimation && (!active), rundis$elm_bootstrap$Bootstrap$Tab$Hidden)
-					})));
-		var linkItem = configRec.useHash ? A2(
-			elm$html$Html$a,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$classList(commonClasses),
-						clickHandler,
-						elm$html$Html$Attributes$href('#' + id)
-					]),
-				attributes),
-			children) : A2(
-			elm$html$Html$button,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$classList(
-						_Utils_ap(
-							commonClasses,
-							_List_fromArray(
-								[
-									_Utils_Tuple2('btn', true),
-									_Utils_Tuple2('btn-link', true)
-								]))),
-						clickHandler
-					]),
-				attributes),
-			children);
-		return A2(
-			elm$html$Html$li,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('nav-item')
-				]),
-			_List_fromArray(
-				[linkItem]));
-	});
-var rundis$elm_bootstrap$Bootstrap$Tab$transitionStyles = function (opacity) {
-	return _List_fromArray(
-		[
-			A2(
-			elm$html$Html$Attributes$style,
-			'opacity',
-			elm$core$String$fromInt(opacity)),
-			A2(elm$html$Html$Attributes$style, '-webkit-transition', 'opacity 0.15s linear'),
-			A2(elm$html$Html$Attributes$style, '-o-transition', 'opacity 0.15s linear'),
-			A2(elm$html$Html$Attributes$style, 'transition', 'opacity 0.15s linear')
-		]);
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$activeTabAttributes = F2(
-	function (_n0, configRec) {
-		var visibility = _n0.a.visibility;
-		switch (visibility.$) {
-			case 'Hidden':
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'display', 'none')
-					]);
-			case 'Start':
-				return _List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'display', 'block'),
-						A2(elm$html$Html$Attributes$style, 'opacity', '0')
-					]);
-			default:
-				return _Utils_ap(
-					_List_fromArray(
-						[
-							A2(elm$html$Html$Attributes$style, 'display', 'block')
-						]),
-					rundis$elm_bootstrap$Bootstrap$Tab$transitionStyles(1));
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Tab$renderTabPane = F5(
-	function (id, active, _n0, state, configRec) {
-		var attributes = _n0.a.attributes;
-		var children = _n0.a.children;
-		var displayAttrs = active ? A2(rundis$elm_bootstrap$Bootstrap$Tab$activeTabAttributes, state, configRec) : _List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$style, 'display', 'none')
-			]);
-		return A2(
-			elm$html$Html$div,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$id(id),
-						elm$html$Html$Attributes$class('tab-pane')
-					]),
-				_Utils_ap(displayAttrs, attributes)),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Tab$tabAttributes = function (configRec) {
->>>>>>> 2ea6de27bffe74dbbade3db8e66a1da1de6e6c28
 	return _Utils_ap(
 		_List_fromArray(
 			[
 				elm$html$Html$Attributes$classList(
 				_List_fromArray(
 					[
-<<<<<<< HEAD
 						_Utils_Tuple2('modal-dialog', true),
 						_Utils_Tuple2('modal-dialog-centered', options.centered)
 					])),
@@ -9935,114 +9651,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 							]))
 					]),
 				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
-=======
-						_Utils_Tuple2('nav', true),
-						_Utils_Tuple2('nav-tabs', !configRec.isPill),
-						_Utils_Tuple2('nav-pills', configRec.isPill)
-					]))
-			]),
-		_Utils_ap(
-			function () {
-				var _n0 = configRec.layout;
-				if (_n0.$ === 'Just') {
-					switch (_n0.a.$) {
-						case 'Justified':
-							var _n1 = _n0.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class('nav-justified')
-								]);
-						case 'Fill':
-							var _n2 = _n0.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class('nav-fill')
-								]);
-						case 'Center':
-							var _n3 = _n0.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class('justify-content-center')
-								]);
-						default:
-							var _n4 = _n0.a;
-							return _List_fromArray(
-								[
-									elm$html$Html$Attributes$class('justify-content-end')
-								]);
-					}
-				} else {
-					return _List_Nil;
-				}
-			}(),
-			configRec.attributes));
-};
-var rundis$elm_bootstrap$Bootstrap$Tab$view = F2(
-	function (state, _n0) {
-		var configRec = _n0.a;
-		var _n1 = A2(rundis$elm_bootstrap$Bootstrap$Tab$getActiveItem, state, configRec);
-		if (_n1.$ === 'Nothing') {
-			return A2(
-				elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$ul,
-						rundis$elm_bootstrap$Bootstrap$Tab$tabAttributes(configRec),
-						_List_Nil),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('tab-content')
-							]),
-						_List_Nil)
-					]));
-		} else {
-			var currentItem = _n1.a.a;
-			return A2(
-				elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$ul,
-						rundis$elm_bootstrap$Bootstrap$Tab$tabAttributes(configRec),
-						A2(
-							elm$core$List$map,
-							function (_n2) {
-								var item_ = _n2.a;
-								return A4(
-									rundis$elm_bootstrap$Bootstrap$Tab$renderLink,
-									item_.id,
-									_Utils_eq(item_.id, currentItem.id),
-									item_.link,
-									configRec);
-							},
-							configRec.items)),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('tab-content')
-							]),
-						A2(
-							elm$core$List$map,
-							function (_n3) {
-								var item_ = _n3.a;
-								return A5(
-									rundis$elm_bootstrap$Bootstrap$Tab$renderTabPane,
-									item_.id,
-									_Utils_eq(item_.id, currentItem.id),
-									item_.pane,
-									state,
-									configRec);
-							},
-							configRec.items))
-					]));
-		}
->>>>>>> 2ea6de27bffe74dbbade3db8e66a1da1de6e6c28
 	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Text$Right = {$: 'Right'};
 var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
@@ -10535,7 +10143,6 @@ var author$project$Home$page = function (model) {
 						]))
 				])),
 			A2(
-<<<<<<< HEAD
 			rundis$elm_bootstrap$Bootstrap$Carousel$view,
 			model.carouselState,
 			rundis$elm_bootstrap$Bootstrap$Carousel$withIndicators(
@@ -10551,7 +10158,7 @@ var author$project$Home$page = function (model) {
 								A2(
 								rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config,
 								_List_Nil,
-								A2(author$project$Home$image, '500px', 'img/sports.jpg'))
+								A2(author$project$Home$image, '500px', 'https://cschank.github.io/Surfer.jpg'))
 							]),
 						A2(
 							rundis$elm_bootstrap$Bootstrap$Carousel$config,
@@ -10630,80 +10237,6 @@ var author$project$Home$page = function (model) {
 									rundis$elm_bootstrap$Bootstrap$Modal$small(
 										rundis$elm_bootstrap$Bootstrap$Modal$config(author$project$Model$CloseModal)))))))
 				]))
-=======
-			rundis$elm_bootstrap$Bootstrap$Tab$view,
-			model.tabState,
-			A2(
-				rundis$elm_bootstrap$Bootstrap$Tab$items,
-				_List_fromArray(
-					[
-						rundis$elm_bootstrap$Bootstrap$Tab$item(
-						{
-							id: 'tabItem1',
-							link: A2(
-								rundis$elm_bootstrap$Bootstrap$Tab$link,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Tab 1')
-									])),
-							pane: A2(
-								rundis$elm_bootstrap$Bootstrap$Tab$pane,
-								_List_fromArray(
-									[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$h4,
-										_List_Nil,
-										_List_fromArray(
-											[
-												elm$html$Html$text('Tab 1 Heading')
-											])),
-										A2(
-										elm$html$Html$p,
-										_List_Nil,
-										_List_fromArray(
-											[
-												elm$html$Html$text('Contents of tab 1.')
-											]))
-									]))
-						}),
-						rundis$elm_bootstrap$Bootstrap$Tab$item(
-						{
-							id: 'tabItem2',
-							link: A2(
-								rundis$elm_bootstrap$Bootstrap$Tab$link,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Tab 2')
-									])),
-							pane: A2(
-								rundis$elm_bootstrap$Bootstrap$Tab$pane,
-								_List_fromArray(
-									[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$h4,
-										_List_Nil,
-										_List_fromArray(
-											[
-												elm$html$Html$text('Tab 2 Heading')
-											])),
-										A2(
-										elm$html$Html$p,
-										_List_Nil,
-										_List_fromArray(
-											[
-												elm$html$Html$text('This is something completely different.')
-											]))
-									]))
-						})
-					]),
-				rundis$elm_bootstrap$Bootstrap$Tab$config(author$project$Model$TabMsg)))
->>>>>>> 2ea6de27bffe74dbbade3db8e66a1da1de6e6c28
 		]);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4 = elm$html$Html$Attributes$class('my-4');
