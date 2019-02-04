@@ -4329,6 +4329,7 @@ function _Browser_load(url)
 }
 var author$project$Model$Chat = {$: 'Chat'};
 var author$project$Model$Home = {$: 'Home'};
+var author$project$Model$SquareOne = {$: 'SquareOne'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4615,7 +4616,11 @@ var author$project$Main$routeParser = elm$url$Url$Parser$oneOf(
 			A2(
 			elm$url$Url$Parser$map,
 			author$project$Model$Chat,
-			elm$url$Url$Parser$s('chat'))
+			elm$url$Url$Parser$s('chat')),
+			A2(
+			elm$url$Url$Parser$map,
+			author$project$Model$SquareOne,
+			elm$url$Url$Parser$s('SquareOne'))
 		]));
 var elm$core$Basics$apR = F2(
 	function (x, f) {
@@ -7148,55 +7153,55 @@ var author$project$Chat$page = function (model) {
 						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
 					_List_fromArray(
 						[
+							elm$html$Html$text('Well')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Great')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Good')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('How are you?')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('How are you?')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Hey')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
 							elm$html$Html$text('Hi')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
-					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Hey')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
-					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('How are you?')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
-					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Hey')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
-					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('How are you?')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
-					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Hey')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
-					_List_fromArray(
-						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('How are you?')
 						]))
 				])),
 			A2(
@@ -7253,6 +7258,16 @@ var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
 			A2(
 				elm$core$List$cons,
 				elm$html$Html$Attributes$class('form-control-label'),
+				attributes),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$validFeedback = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('valid-feedback'),
 				attributes),
 			children);
 	});
@@ -8284,6 +8299,13 @@ var author$project$Home$page = function (model) {
 													rundis$elm_bootstrap$Bootstrap$Form$Input$id('myid')
 												])),
 											A2(
+											rundis$elm_bootstrap$Bootstrap$Form$validFeedback,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('All good !')
+												])),
+											A2(
 											rundis$elm_bootstrap$Bootstrap$Form$help,
 											_List_Nil,
 											_List_fromArray(
@@ -8306,6 +8328,13 @@ var author$project$Home$page = function (model) {
 												[
 													elm$html$Html$text('Password ')
 												])),
+											A2(
+											rundis$elm_bootstrap$Bootstrap$Form$validFeedback,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('All good !')
+												])),
 											rundis$elm_bootstrap$Bootstrap$Form$Input$password(
 											_List_fromArray(
 												[
@@ -8316,7 +8345,7 @@ var author$project$Home$page = function (model) {
 									elm$html$Html$a,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$href('#chat')
+											elm$html$Html$Attributes$href('#SquareOne')
 										]),
 									_List_fromArray(
 										[
@@ -8346,6 +8375,102 @@ var author$project$Main$pageNotFound = _List_fromArray(
 			])),
 		elm$html$Html$text('Sorry, couldn\'t find that page')
 	]);
+var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var author$project$SquareOne$page = function (model) {
+	return _List_fromArray(
+		[
+			A2(
+			elm$html$Html$h2,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text('World')
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('#chat')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$img,
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'width', '200px'),
+											elm$html$Html$Attributes$src('img/shop.jpeg')
+										]),
+									_List_Nil)
+								]))
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('http://www.sciod.ca/')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$img,
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'width', '600px'),
+											elm$html$Html$Attributes$src('img/globe.jpeg')
+										]),
+									_List_Nil)
+								]))
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('#')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$img,
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'width', '100px'),
+											elm$html$Html$Attributes$src('img/gradcap.jpg')
+										]),
+									_List_Nil)
+								]))
+						]))
+				]))
+		]);
+};
 var rundis$elm_bootstrap$Bootstrap$Grid$container = F2(
 	function (attributes, children) {
 		return A2(
@@ -8369,6 +8494,8 @@ var author$project$Main$mainContent = function (model) {
 					return author$project$Home$page(model);
 				case 'Chat':
 					return author$project$Chat$page(model);
+				case 'SquareOne':
+					return author$project$SquareOne$page(model);
 				default:
 					return author$project$Main$pageNotFound;
 			}
@@ -8485,8 +8612,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand = function (brand_) {
 	}
 };
 var elm$core$Basics$not = _Basics_not;
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -9229,6 +9354,16 @@ var author$project$Main$menu = function (model) {
 					_List_fromArray(
 						[
 							elm$html$Html$text('Chat')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$href('#SquareOne')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('World')
 						]))
 				]),
 			A3(
@@ -9262,6 +9397,8 @@ var author$project$Main$view = function (model) {
 					return 'Log In';
 				case 'Chat':
 					return 'Chat';
+				case 'SquareOne':
+					return 'Square One';
 				default:
 					return 'Page Not Found';
 			}
