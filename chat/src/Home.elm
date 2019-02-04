@@ -41,7 +41,7 @@ page model =
                     , Form.validFeedback [] [ text "All good !" ]
                     , Input.password [ Input.id "mypwd" ]
                     ]
-                , a [href "#chat"] [Button.button [][text "Submit"]]
+                , a [href "#SquareOne"] [Button.button [][text "Submit"]]
                 ]
             ]
         ]
