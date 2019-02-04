@@ -31,6 +31,7 @@ type alias Model =
 type Page
     = Home
     | Chat
+    | SquareOne
     | NotFound
 
 
