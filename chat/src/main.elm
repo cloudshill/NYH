@@ -27,6 +27,7 @@ import Task
 import Model exposing(Model,Page(..),Msg(..))
 import Home
 import Chat
+import SquareOne
 
 
 type alias Flags =
@@ -113,6 +114,7 @@ routeParser =
     UrlParser.oneOf
         [ UrlParser.map Home top
         , UrlParser.map Chat (s "chat")
+        , UrlParser.map SquareOne (s "SquareOne")
         ]
 
 
@@ -124,6 +126,9 @@ view model =
 
           Chat ->
               "Chat"
+
+          SquareOne ->
+                "Square One"
 
           NotFound ->
               "Page Not Found"
@@ -144,6 +149,7 @@ menu model =
         |> Navbar.items
             [ Navbar.itemLink [ href "#" ] [ text "Home" ]
             , Navbar.itemLink [ href "#chat" ] [ text "Chat" ]
+            , Navbar.itemLink [ href "#SquareOne" ] [ text "World" ]
             ]
         |> Navbar.view model.navState
 
@@ -156,6 +162,9 @@ mainContent model =
 
             Chat ->
                 Chat.page model
+
+            SquareOne ->
+               SquareOne.page model
 
             NotFound ->
                 pageNotFound
