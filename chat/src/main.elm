@@ -29,6 +29,8 @@ import Home
 import Chat
 import SquareOne
 import Jobs
+import McMaster
+import UniCol
 import FAQ
 
 
@@ -117,6 +119,8 @@ routeParser =
         [ UrlParser.map Home top
         , UrlParser.map Chat (s "chat")
         , UrlParser.map SquareOne (s "SquareOne")
+        , UrlParser.map McMaster (s "McMaster")
+        , UrlParser.map UniCol (s "UniCol")
         , UrlParser.map Jobs (s "jobs")
         , UrlParser.map FAQ (s "faq")
         ]
@@ -136,6 +140,12 @@ view model =
 
           Jobs ->
                 "Jobs"
+
+          McMaster ->
+                "McMaster"
+
+          UniCol ->
+                "UniCol"
 
           FAQ ->
                 "Questions and Answers"
@@ -176,6 +186,12 @@ mainContent model =
 
             Jobs ->
                 Jobs.page model
+
+            McMaster ->
+                McMaster.page model
+
+            UniCol ->
+                UniCol.page model
 
             FAQ ->
                 FAQ.page model
