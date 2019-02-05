@@ -55,10 +55,12 @@ page model =
         [ Grid.col []
             [ h4 [Spacing.mt5] [ text "Resume Clinic"]]
         ]
+    {-
     , Grid.row []
         [ Grid.col []
             [ a [target "_blank", href "https://emilyham.github.io/NYH/Examples/Accordion/"] [ text "Example resume template"]]
         ]
+    -}
     , Grid.row []
         [ Grid.col []
             [ h4 [Spacing.mt5] [ text "Interview Clinic"]]
