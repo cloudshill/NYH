@@ -35,6 +35,8 @@ type Page
     | Jobs
     | FAQ
     | NotFound
+    | McMaster
+    | UniCol
 
 
 type Msg
