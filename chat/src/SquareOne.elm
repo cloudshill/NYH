@@ -66,9 +66,9 @@ page model =
         ]
 
       , Grid.row []
-        [Grid.col[] [a [href "#chat"] [img [style "width" "200px", src "img/shop.jpeg"] []]]
-        , Grid.col[] [a [href "http://www.sciod.ca/"] [img [style "width" "600px", src "img/globe.jpeg"][]]]
-        , Grid.col[] [a [href "#"] [img [style "width" "100px", src "img/gradcap.jpg"] []]]
+        [Grid.col[] [a [href "#chat"] [img [style "width" "200px", src "img/mall.jpg"] []]]
+        , Grid.col[] [a [href "http://www.sciod.ca/"] [img [style "width" "600px", src "img/globe.png"][]]]
+        , Grid.col[] [a [href "#UniCol"] [img [style "width" "200px", src "img/gradcap.jpg"] []]]
         ]
 
     ]
