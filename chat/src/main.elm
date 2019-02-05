@@ -28,6 +28,8 @@ import Model exposing(Model,Page(..),Msg(..))
 import Home
 import Chat
 import SquareOne
+import Jobs
+import FAQ
 
 
 type alias Flags =
@@ -115,6 +117,8 @@ routeParser =
         [ UrlParser.map Home top
         , UrlParser.map Chat (s "chat")
         , UrlParser.map SquareOne (s "SquareOne")
+        , UrlParser.map Jobs (s "jobs")
+        , UrlParser.map FAQ (s "faq")
         ]
 
 
@@ -129,6 +133,12 @@ view model =
 
           SquareOne ->
                 "Square One"
+
+          Jobs ->
+                "Jobs"
+
+          FAQ ->
+                "Questions and Answers"
 
           NotFound ->
               "Page Not Found"
@@ -147,9 +157,7 @@ menu model =
         |> Navbar.container
         |> Navbar.brand [ href "#" ] []
         |> Navbar.items
-            [ Navbar.itemLink [ href "#" ] [ text "Home" ]
-            , Navbar.itemLink [ href "#chat" ] [ text "Chat" ]
-            , Navbar.itemLink [ href "#SquareOne" ] [ text "World" ]
+            [ Navbar.itemLink [ href "#SquareOne" ] [ text "World" ]
             ]
         |> Navbar.view model.navState
 
@@ -165,6 +173,12 @@ mainContent model =
 
             SquareOne ->
                SquareOne.page model
+
+            Jobs ->
+                Jobs.page model
+
+            FAQ ->
+                FAQ.page model
 
             NotFound ->
                 pageNotFound

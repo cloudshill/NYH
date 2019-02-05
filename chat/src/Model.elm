@@ -32,6 +32,8 @@ type Page
     = Home
     | Chat
     | SquareOne
+    | Jobs
+    | FAQ
     | NotFound
 
 

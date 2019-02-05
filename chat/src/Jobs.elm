@@ -1,4 +1,4 @@
-module SquareOne exposing (page)
+module Jobs exposing (page)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -28,47 +28,39 @@ import Model exposing (Model,Msg(..))
 
 page : Model -> List (Html Msg)
 page model =
-    [ h2 [] [ text "World" ]
+    [ h2 [Spacing.mt5] [ text "Jobs" ]
     , Grid.row []
         [ Grid.col []
-            [ h4 [] [ text "Universities and Colleges"]
-            ]
+            [ h4 [] [ text "Job Board"]]
         ]
-    , Grid.row []
-        [ Grid.col []
-            [ h4 [Spacing.mt5] [ text "Apprenticeships"]
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col []
-            [ a [ href "#jobs"] [h4 [Spacing.mt5] [ text "Jobs"]]
-            ]
+    , ListGroup.ul
+        [ ListGroup.li [] [ text "Job 1" ]
+        , ListGroup.li [] [ text "Job 2" ]
+        , ListGroup.li [] [ text "Job 3" ]
         ]
     , Grid.row []
         [ Grid.col []
-            [ h4 [Spacing.mt5] [ text "Volunteering"]
+            [ h4 [Spacing.my3] [ text " "]]
+        ]
+    , Form.form []
+        [ Form.group []
+            [ Textarea.textarea
+                [ Textarea.id "search"
+                , Textarea.rows 1
+                ]
             ]
+        , Button.button [] [ text "Search" ]
         ]
     , Grid.row []
         [ Grid.col []
-            [ h4 [Spacing.mt5] [ text "Sports Hall"]
-            ]
+            [ h4 [Spacing.mt5] [ text "Resume Clinic"]]
         ]
     , Grid.row []
         [ Grid.col []
-            [ h4 [Spacing.mt5] [ text "Language Street"]
-            ]
+            [ a [href "https://emilyham.github.io/NYH/Examples/Accordion/"] [ text "Example resume template"]]
         ]
     , Grid.row []
         [ Grid.col []
-            [ a [ href "#faq"] [h4 [Spacing.mt5] [ text "Questions and Answers"]]
-            ]
+            [ h4 [Spacing.mt5] [ text "Interview Clinic"]]
         ]
-
-      , Grid.row []
-        [Grid.col[] [a [href "#chat"] [img [style "width" "200px", src "img/shop.jpeg"] []]]
-        , Grid.col[] [a [href "http://www.sciod.ca/"] [img [style "width" "600px", src "img/globe.jpeg"][]]]
-        , Grid.col[] [a [href "#"] [img [style "width" "100px", src "img/gradcap.jpg"] []]]
-        ]
-
     ]

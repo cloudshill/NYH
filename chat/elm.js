@@ -4328,7 +4328,9 @@ function _Browser_load(url)
 	}));
 }
 var author$project$Model$Chat = {$: 'Chat'};
+var author$project$Model$FAQ = {$: 'FAQ'};
 var author$project$Model$Home = {$: 'Home'};
+var author$project$Model$Jobs = {$: 'Jobs'};
 var author$project$Model$SquareOne = {$: 'SquareOne'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
@@ -4620,7 +4622,15 @@ var author$project$Main$routeParser = elm$url$Url$Parser$oneOf(
 			A2(
 			elm$url$Url$Parser$map,
 			author$project$Model$SquareOne,
-			elm$url$Url$Parser$s('SquareOne'))
+			elm$url$Url$Parser$s('SquareOne')),
+			A2(
+			elm$url$Url$Parser$map,
+			author$project$Model$Jobs,
+			elm$url$Url$Parser$s('jobs')),
+			A2(
+			elm$url$Url$Parser$map,
+			author$project$Model$FAQ,
+			elm$url$Url$Parser$s('faq'))
 		]));
 var elm$core$Basics$apR = F2(
 	function (x, f) {
@@ -7225,235 +7235,71 @@ var author$project$Chat$page = function (model) {
 				]))
 		]);
 };
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
+var elm$html$Html$h4 = _VirtualDom_node('h4');
+var elm$html$Html$h6 = _VirtualDom_node('h6');
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var rundis$elm_bootstrap$Bootstrap$Badge$Primary = {$: 'Primary'};
+var rundis$elm_bootstrap$Bootstrap$Badge$Roled = function (a) {
+	return {$: 'Roled', a: a};
 };
+var elm$html$Html$span = _VirtualDom_node('span');
+var rundis$elm_bootstrap$Bootstrap$Badge$roleOption = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'badge-primary';
+		case 'Secondary':
+			return 'badge-secondary';
+		case 'Success':
+			return 'badge-success';
+		case 'Info':
+			return 'badge-info';
+		case 'Warning':
+			return 'badge-warning';
+		case 'Danger':
+			return 'badge-danger';
+		case 'Light':
+			return 'badge-light';
+		default:
+			return 'badge-dark';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Badge$badgeClass = function (option) {
+	return elm$html$Html$Attributes$class(
+		function () {
+			if (option.$ === 'Pill') {
+				return 'badge-pill';
+			} else {
+				var role = option.a;
+				return rundis$elm_bootstrap$Bootstrap$Badge$roleOption(role);
+			}
+		}());
+};
+var rundis$elm_bootstrap$Bootstrap$Badge$badgeAttributes = function (options) {
+	return A2(
+		elm$core$List$cons,
+		elm$html$Html$Attributes$class('badge'),
+		A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Badge$badgeClass, options));
+};
+var rundis$elm_bootstrap$Bootstrap$Badge$badgeInternal = F3(
+	function (options, attributes, children) {
+		return A2(
+			elm$html$Html$span,
+			_Utils_ap(
+				rundis$elm_bootstrap$Bootstrap$Badge$badgeAttributes(options),
+				attributes),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Badge$badgePrimary = rundis$elm_bootstrap$Bootstrap$Badge$badgeInternal(
+	_List_fromArray(
+		[
+			rundis$elm_bootstrap$Bootstrap$Badge$Roled(rundis$elm_bootstrap$Bootstrap$Badge$Primary)
+		]));
 var elm$html$Html$form = _VirtualDom_node('form');
 var rundis$elm_bootstrap$Bootstrap$Form$form = F2(
 	function (attributes, children) {
 		return A2(elm$html$Html$form, attributes, children);
 	});
-var elm$html$Html$small = _VirtualDom_node('small');
-var rundis$elm_bootstrap$Bootstrap$Form$help = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$small,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('form-text text-muted'),
-				attributes),
-			children);
-	});
-var elm$html$Html$label = _VirtualDom_node('label');
-var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$label,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('form-control-label'),
-				attributes),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Form$validFeedback = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$div,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('valid-feedback'),
-				attributes),
-			children);
-	});
-var rundis$elm_bootstrap$Bootstrap$Form$Input$Email = {$: 'Email'};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$Input = function (a) {
-	return {$: 'Input', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$Type = function (a) {
-	return {$: 'Type', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$create = F2(
-	function (tipe, options) {
-		return rundis$elm_bootstrap$Bootstrap$Form$Input$Input(
-			{
-				options: A2(
-					elm$core$List$cons,
-					rundis$elm_bootstrap$Bootstrap$Form$Input$Type(tipe),
-					options)
-			});
-	});
-var elm$html$Html$input = _VirtualDom_node('input');
-var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
-var elm$html$Html$Attributes$readonly = elm$html$Html$Attributes$boolProperty('readOnly');
-var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
-	function (modifier, options) {
-		switch (modifier.$) {
-			case 'Size':
-				var size_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						size: elm$core$Maybe$Just(size_)
-					});
-			case 'Id':
-				var id_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						id: elm$core$Maybe$Just(id_)
-					});
-			case 'Type':
-				var tipe = modifier.a;
-				return _Utils_update(
-					options,
-					{tipe: tipe});
-			case 'Disabled':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{disabled: val});
-			case 'Value':
-				var value_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						value: elm$core$Maybe$Just(value_)
-					});
-			case 'Placeholder':
-				var value_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						placeholder: elm$core$Maybe$Just(value_)
-					});
-			case 'OnInput':
-				var onInput_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						onInput: elm$core$Maybe$Just(onInput_)
-					});
-			case 'Validation':
-				var validation_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						validation: elm$core$Maybe$Just(validation_)
-					});
-			case 'Readonly':
-				var val = modifier.a;
-				return _Utils_update(
-					options,
-					{readonly: val});
-			default:
-				var attrs_ = modifier.a;
-				return _Utils_update(
-					options,
-					{
-						attributes: _Utils_ap(options.attributes, attrs_)
-					});
-		}
-	});
-var rundis$elm_bootstrap$Bootstrap$Form$Input$Text = {$: 'Text'};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
-	return A2(
-		elm$core$Maybe$map,
-		function (s) {
-			return elm$html$Html$Attributes$class('form-control-' + s);
-		},
-		rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size));
-};
-var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
-var rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute = function (inputType) {
-	return elm$html$Html$Attributes$type_(
-		function () {
-			switch (inputType.$) {
-				case 'Text':
-					return 'text';
-				case 'Password':
-					return 'password';
-				case 'DatetimeLocal':
-					return 'datetime-local';
-				case 'Date':
-					return 'date';
-				case 'Month':
-					return 'month';
-				case 'Time':
-					return 'time';
-				case 'Week':
-					return 'week';
-				case 'Number':
-					return 'number';
-				case 'Email':
-					return 'email';
-				case 'Url':
-					return 'url';
-				case 'Search':
-					return 'search';
-				case 'Tel':
-					return 'tel';
-				default:
-					return 'color';
-			}
-		}());
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute = function (validation) {
-	return elm$html$Html$Attributes$class(
-		rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(validation));
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes = function (modifiers) {
-	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions, modifiers);
-	return _Utils_ap(
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('form-control'),
-				elm$html$Html$Attributes$disabled(options.disabled),
-				elm$html$Html$Attributes$readonly(options.readonly),
-				rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute(options.tipe)
-			]),
-		_Utils_ap(
-			A2(
-				elm$core$List$filterMap,
-				elm$core$Basics$identity,
-				_List_fromArray(
-					[
-						A2(elm$core$Maybe$map, elm$html$Html$Attributes$id, options.id),
-						A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute, options.size),
-						A2(elm$core$Maybe$map, elm$html$Html$Attributes$value, options.value),
-						A2(elm$core$Maybe$map, elm$html$Html$Attributes$placeholder, options.placeholder),
-						A2(elm$core$Maybe$map, elm$html$Html$Events$onInput, options.onInput),
-						A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute, options.validation)
-					])),
-			options.attributes));
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$view = function (_n0) {
-	var options = _n0.a.options;
-	return A2(
-		elm$html$Html$input,
-		rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes(options),
-		_List_Nil);
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$input = F2(
-	function (tipe, options) {
-		return rundis$elm_bootstrap$Bootstrap$Form$Input$view(
-			A2(rundis$elm_bootstrap$Bootstrap$Form$Input$create, tipe, options));
-	});
-var rundis$elm_bootstrap$Bootstrap$Form$Input$email = rundis$elm_bootstrap$Bootstrap$Form$Input$input(rundis$elm_bootstrap$Bootstrap$Form$Input$Email);
-var rundis$elm_bootstrap$Bootstrap$Form$Input$Id = function (a) {
-	return {$: 'Id', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$id = function (id_) {
-	return rundis$elm_bootstrap$Bootstrap$Form$Input$Id(id_);
-};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$Password = {$: 'Password'};
-var rundis$elm_bootstrap$Bootstrap$Form$Input$password = rundis$elm_bootstrap$Bootstrap$Form$Input$input(rundis$elm_bootstrap$Bootstrap$Form$Input$Password);
 var rundis$elm_bootstrap$Bootstrap$Grid$Column = function (a) {
 	return {$: 'Column', a: a};
 };
@@ -8253,6 +8099,400 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4 = elm$html$Html$Attributes$class('my-4');
+var author$project$FAQ$page = function (model) {
+	return _List_fromArray(
+		[
+			A2(
+			elm$html$Html$h2,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text('FAQ')
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Form$form,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Form$group,
+					_List_Nil,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea(
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Form$Textarea$id('search'),
+									rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows(1)
+								]))
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Search')
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(' ')
+								]))
+						]))
+				])),
+			rundis$elm_bootstrap$Bootstrap$ListGroup$ul(
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$primary]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Question')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h6,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'font-weight', '700')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Person 1')
+								])),
+							elm$html$Html$text('Answer 1')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h6,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'font-weight', '700')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Person 2')
+								])),
+							elm$html$Html$text('Answer 2')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$ListGroup$light]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h6,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'font-weight', '700')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Person 3  '),
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Badge$badgePrimary,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Guidance Counsellor')
+										]))
+								])),
+							elm$html$Html$text('Answer 3')
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(' ')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Form$group,
+			_List_Nil,
+			_List_fromArray(
+				[
+					rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea(
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Form$Textarea$id('myarea'),
+							rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows(3)
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Button$button,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text('Send')
+				]))
+		]);
+};
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var elm$html$Html$small = _VirtualDom_node('small');
+var rundis$elm_bootstrap$Bootstrap$Form$help = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$small,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('form-text text-muted'),
+				attributes),
+			children);
+	});
+var elm$html$Html$label = _VirtualDom_node('label');
+var rundis$elm_bootstrap$Bootstrap$Form$label = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$label,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('form-control-label'),
+				attributes),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$validFeedback = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('valid-feedback'),
+				attributes),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Email = {$: 'Email'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Input = function (a) {
+	return {$: 'Input', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Type = function (a) {
+	return {$: 'Type', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$create = F2(
+	function (tipe, options) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Input$Input(
+			{
+				options: A2(
+					elm$core$List$cons,
+					rundis$elm_bootstrap$Bootstrap$Form$Input$Type(tipe),
+					options)
+			});
+	});
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
+var elm$html$Html$Attributes$readonly = elm$html$Html$Attributes$boolProperty('readOnly');
+var rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size_)
+					});
+			case 'Id':
+				var id_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						id: elm$core$Maybe$Just(id_)
+					});
+			case 'Type':
+				var tipe = modifier.a;
+				return _Utils_update(
+					options,
+					{tipe: tipe});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			case 'Value':
+				var value_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						value: elm$core$Maybe$Just(value_)
+					});
+			case 'Placeholder':
+				var value_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						placeholder: elm$core$Maybe$Just(value_)
+					});
+			case 'OnInput':
+				var onInput_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						onInput: elm$core$Maybe$Just(onInput_)
+					});
+			case 'Validation':
+				var validation_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						validation: elm$core$Maybe$Just(validation_)
+					});
+			case 'Readonly':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{readonly: val});
+			default:
+				var attrs_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs_)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Text = {$: 'Text'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions = {attributes: _List_Nil, disabled: false, id: elm$core$Maybe$Nothing, onInput: elm$core$Maybe$Nothing, placeholder: elm$core$Maybe$Nothing, readonly: false, size: elm$core$Maybe$Nothing, tipe: rundis$elm_bootstrap$Bootstrap$Form$Input$Text, validation: elm$core$Maybe$Nothing, value: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute = function (size) {
+	return A2(
+		elm$core$Maybe$map,
+		function (s) {
+			return elm$html$Html$Attributes$class('form-control-' + s);
+		},
+		rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption(size));
+};
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute = function (inputType) {
+	return elm$html$Html$Attributes$type_(
+		function () {
+			switch (inputType.$) {
+				case 'Text':
+					return 'text';
+				case 'Password':
+					return 'password';
+				case 'DatetimeLocal':
+					return 'datetime-local';
+				case 'Date':
+					return 'date';
+				case 'Month':
+					return 'month';
+				case 'Time':
+					return 'time';
+				case 'Week':
+					return 'week';
+				case 'Number':
+					return 'number';
+				case 'Email':
+					return 'email';
+				case 'Url':
+					return 'url';
+				case 'Search':
+					return 'search';
+				case 'Tel':
+					return 'tel';
+				default:
+					return 'color';
+			}
+		}());
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute = function (validation) {
+	return elm$html$Html$Attributes$class(
+		rundis$elm_bootstrap$Bootstrap$Form$FormInternal$validationToString(validation));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Form$Input$applyModifier, rundis$elm_bootstrap$Bootstrap$Form$Input$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('form-control'),
+				elm$html$Html$Attributes$disabled(options.disabled),
+				elm$html$Html$Attributes$readonly(options.readonly),
+				rundis$elm_bootstrap$Bootstrap$Form$Input$typeAttribute(options.tipe)
+			]),
+		_Utils_ap(
+			A2(
+				elm$core$List$filterMap,
+				elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$id, options.id),
+						A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$Form$Input$sizeAttribute, options.size),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$value, options.value),
+						A2(elm$core$Maybe$map, elm$html$Html$Attributes$placeholder, options.placeholder),
+						A2(elm$core$Maybe$map, elm$html$Html$Events$onInput, options.onInput),
+						A2(elm$core$Maybe$map, rundis$elm_bootstrap$Bootstrap$Form$Input$validationAttribute, options.validation)
+					])),
+			options.attributes));
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$view = function (_n0) {
+	var options = _n0.a.options;
+	return A2(
+		elm$html$Html$input,
+		rundis$elm_bootstrap$Bootstrap$Form$Input$toAttributes(options),
+		_List_Nil);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$input = F2(
+	function (tipe, options) {
+		return rundis$elm_bootstrap$Bootstrap$Form$Input$view(
+			A2(rundis$elm_bootstrap$Bootstrap$Form$Input$create, tipe, options));
+	});
+var rundis$elm_bootstrap$Bootstrap$Form$Input$email = rundis$elm_bootstrap$Bootstrap$Form$Input$input(rundis$elm_bootstrap$Bootstrap$Form$Input$Email);
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Id = function (a) {
+	return {$: 'Id', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$id = function (id_) {
+	return rundis$elm_bootstrap$Bootstrap$Form$Input$Id(id_);
+};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$Password = {$: 'Password'};
+var rundis$elm_bootstrap$Bootstrap$Form$Input$password = rundis$elm_bootstrap$Bootstrap$Form$Input$input(rundis$elm_bootstrap$Bootstrap$Form$Input$Password);
 var author$project$Home$page = function (model) {
 	return _List_fromArray(
 		[
@@ -8362,7 +8602,172 @@ var author$project$Home$page = function (model) {
 				]))
 		]);
 };
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4 = elm$html$Html$Attributes$class('my-4');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5 = elm$html$Html$Attributes$class('mt-5');
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3 = elm$html$Html$Attributes$class('my-3');
+var author$project$Jobs$page = function (model) {
+	return _List_fromArray(
+		[
+			A2(
+			elm$html$Html$h2,
+			_List_fromArray(
+				[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('Jobs')
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text('Job Board')
+								]))
+						]))
+				])),
+			rundis$elm_bootstrap$Bootstrap$ListGroup$ul(
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Job 1')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Job 2')
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$ListGroup$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Job 3')
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(' ')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Form$form,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Form$group,
+					_List_Nil,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Form$Textarea$textarea(
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Form$Textarea$id('search'),
+									rundis$elm_bootstrap$Bootstrap$Form$Textarea$rows(1)
+								]))
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Button$button,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Search')
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Resume Clinic')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('https://emilyham.github.io/NYH/Examples/Accordion/')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Example resume template')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Interview Clinic')
+								]))
+						]))
+				]))
+		]);
+};
 var author$project$Main$pageNotFound = _List_fromArray(
 	[
 		A2(
@@ -8382,8 +8787,6 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var author$project$SquareOne$page = function (model) {
 	return _List_fromArray(
 		[
@@ -8393,6 +8796,163 @@ var author$project$SquareOne$page = function (model) {
 			_List_fromArray(
 				[
 					elm$html$Html$text('World')
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text('Universities and Colleges')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Apprenticeships')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('#jobs')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$h4,
+									_List_fromArray(
+										[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+									_List_fromArray(
+										[
+											elm$html$Html$text('Jobs')
+										]))
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Volunteering')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Sports Hall')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h4,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Language Street')
+								]))
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('#faq')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$h4,
+									_List_fromArray(
+										[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5]),
+									_List_fromArray(
+										[
+											elm$html$Html$text('Questions and Answers')
+										]))
+								]))
+						]))
 				])),
 			A2(
 			rundis$elm_bootstrap$Bootstrap$Grid$row,
@@ -8496,6 +9056,10 @@ var author$project$Main$mainContent = function (model) {
 					return author$project$Chat$page(model);
 				case 'SquareOne':
 					return author$project$SquareOne$page(model);
+				case 'Jobs':
+					return author$project$Jobs$page(model);
+				case 'FAQ':
+					return author$project$FAQ$page(model);
 				default:
 					return author$project$Main$pageNotFound;
 			}
@@ -8601,7 +9165,6 @@ var rundis$elm_bootstrap$Bootstrap$Navbar$items = F2(
 			config_);
 	});
 var elm$html$Html$nav = _VirtualDom_node('nav');
-var elm$html$Html$span = _VirtualDom_node('span');
 var rundis$elm_bootstrap$Bootstrap$Navbar$maybeBrand = function (brand_) {
 	if (brand_.$ === 'Just') {
 		var b = brand_.a.a;
@@ -9339,26 +9902,6 @@ var author$project$Main$menu = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$href('#')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Home')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$href('#chat')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Chat')
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Navbar$itemLink,
-					_List_fromArray(
-						[
 							elm$html$Html$Attributes$href('#SquareOne')
 						]),
 					_List_fromArray(
@@ -9399,6 +9942,10 @@ var author$project$Main$view = function (model) {
 					return 'Chat';
 				case 'SquareOne':
 					return 'Square One';
+				case 'Jobs':
+					return 'Jobs';
+				case 'FAQ':
+					return 'Questions and Answers';
 				default:
 					return 'Page Not Found';
 			}
