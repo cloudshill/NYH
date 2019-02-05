@@ -57,7 +57,7 @@ page model =
         ]
     , Grid.row []
         [ Grid.col []
-            [ a [href "https://emilyham.github.io/NYH/Examples/Accordion/"] [ text "Example resume template"]]
+            [ a [target "_blank", href "https://emilyham.github.io/NYH/Examples/Accordion/"] [ text "Example resume template"]]
         ]
     , Grid.row []
         [ Grid.col []
