@@ -38,28 +38,11 @@ page model =
         , ListGroup.li [ ListGroup.light ] [ text "Hey" ]
         , ListGroup.li [ ListGroup.primary ] [ text "Hi" ]
         ]
-{-
-    , Card.config []
-        |> Card.header [ ]
-            [ h3 [ ] [ text "Hi" ]
-                ]
-        |> Card.block []
-            [ Block.text [] [ text "My message" ]
-            ]
-        |> Card.view
-    , Card.config []
-        |> Card.header [ ]
-            [ h3 [ ] [ text "You" ]
-                ]
-        |> Card.block []
-            [ Block.text [] [ text "Your message" ]
-            ]
-        |> Card.view -}
     , Form.group []
         [ Textarea.textarea
             [ Textarea.id "myarea"
             , Textarea.rows 3
             ]
         ]
-    , Button.button [] [text "Send"]
+    , Button.button [Button.secondary] [text "Send"]
     ]
