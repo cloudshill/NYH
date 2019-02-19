@@ -7158,6 +7158,7 @@ var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$h2 = _VirtualDom_node('h2');
+var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$h4 = _VirtualDom_node('h4');
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var elm$html$Html$h6 = _VirtualDom_node('h6');
@@ -7977,15 +7978,15 @@ var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
 	return {$: 'Coloring', a: a};
 };
-var rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined = function (a) {
-	return {$: 'Outlined', a: a};
-};
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary = {$: 'Primary'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$primary = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Primary));
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Success = {$: 'Success'};
-var rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
-	rundis$elm_bootstrap$Bootstrap$Internal$Button$Outlined(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
+var rundis$elm_bootstrap$Bootstrap$Button$success = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Success));
 var rundis$elm_bootstrap$Bootstrap$Card$Internal$BlockItem = function (a) {
 	return {$: 'BlockItem', a: a};
 };
@@ -9206,6 +9207,8 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm3 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col3);
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8 = {$: 'Col8'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm8 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8);
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col9 = {$: 'Col9'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm9 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col9);
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$TextAlign = function (a) {
 	return {$: 'TextAlign', a: a};
 };
@@ -9262,7 +9265,6 @@ var rundis$elm_bootstrap$Bootstrap$Modal$footer = F3(
 							{attributes: attributes, children: children}))
 				}));
 	});
-var elm$html$Html$h3 = _VirtualDom_node('h3');
 var rundis$elm_bootstrap$Bootstrap$Modal$Header = function (a) {
 	return {$: 'Header', a: a};
 };
@@ -9652,11 +9654,13 @@ var rundis$elm_bootstrap$Bootstrap$Modal$view = F2(
 					]),
 				A2(rundis$elm_bootstrap$Bootstrap$Modal$backdrop, visibility, conf)));
 	});
-var rundis$elm_bootstrap$Bootstrap$Internal$Text$Right = {$: 'Right'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Text$Center = {$: 'Center'};
 var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
 var rundis$elm_bootstrap$Bootstrap$Text$alignLg = function (dir) {
 	return {dir: dir, size: rundis$elm_bootstrap$Bootstrap$General$Internal$LG};
 };
+var rundis$elm_bootstrap$Bootstrap$Text$alignLgCenter = rundis$elm_bootstrap$Bootstrap$Text$alignLg(rundis$elm_bootstrap$Bootstrap$Internal$Text$Center);
+var rundis$elm_bootstrap$Bootstrap$Internal$Text$Right = {$: 'Right'};
 var rundis$elm_bootstrap$Bootstrap$Text$alignLgRight = rundis$elm_bootstrap$Bootstrap$Text$alignLg(rundis$elm_bootstrap$Bootstrap$Internal$Text$Right);
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2 = elm$html$Html$Attributes$class('mb-2');
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3 = elm$html$Html$Attributes$class('mt-3');
@@ -9758,7 +9762,7 @@ var author$project$Home$page = function (model) {
 						[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('- Some stuff here (with an offset)')
+							elm$html$Html$text('- Some stuff here')
 						]))
 				])),
 			A2(
@@ -9772,7 +9776,7 @@ var author$project$Home$page = function (model) {
 						[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('- Some more stuff (this has an offset too)')
+							elm$html$Html$text('- Some more stuff')
 						]))
 				])),
 			A2(
@@ -9843,7 +9847,7 @@ var author$project$Home$page = function (model) {
 						[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('- Some stuff here (with an offset)')
+							elm$html$Html$text('- Some stuff here')
 						]))
 				])),
 			A2(
@@ -9857,7 +9861,7 @@ var author$project$Home$page = function (model) {
 						[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('- Some more stuff (this has an offset too)')
+							elm$html$Html$text('- Some more stuff')
 						]))
 				])),
 			A2(
@@ -9925,7 +9929,7 @@ var author$project$Home$page = function (model) {
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('Date')
+							elm$html$Html$text('StartYear - EndYear')
 						]))
 				])),
 			A2(
@@ -9939,15 +9943,11 @@ var author$project$Home$page = function (model) {
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$a,
+							elm$html$Html$h3,
+							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$target('_blank'),
-									elm$html$Html$Attributes$href('https://www.google.ca/')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('This is also a link')
+									elm$html$Html$text(' ')
 								]))
 						]))
 				])),
@@ -9958,72 +9958,11 @@ var author$project$Home$page = function (model) {
 				[
 					A2(
 					rundis$elm_bootstrap$Bootstrap$Grid$col,
-					_List_Nil,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm9]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('This picture has a link:'),
-							A2(
-							elm$html$Html$a,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$target('_blank'),
-									elm$html$Html$Attributes$href('https://www.google.ca/')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$img,
-									_List_fromArray(
-										[
-											A2(elm$html$Html$Attributes$style, 'width', '150px'),
-											elm$html$Html$Attributes$src('img/school.png')
-										]),
-									_List_Nil)
-								]))
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Grid$col,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('This is just a picture:'),
-							A2(
-							elm$html$Html$img,
-							_List_fromArray(
-								[
-									A2(elm$html$Html$Attributes$style, 'width', '200px'),
-									elm$html$Html$Attributes$src('img/grad-cap.png')
-								]),
-							_List_Nil)
-						]))
-				])),
-			A2(
-			rundis$elm_bootstrap$Bootstrap$Grid$row,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Grid$col,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$h6,
-							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my5]),
-							_List_Nil)
-						]))
-				])),
-			A2(
-			rundis$elm_bootstrap$Bootstrap$Grid$row,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Grid$col,
-					_List_Nil,
-					_List_fromArray(
-						[
+							elm$html$Html$text('Some information here'),
 							A2(
 							rundis$elm_bootstrap$Bootstrap$Accordion$view,
 							model.accordionState,
@@ -10050,15 +9989,28 @@ var author$project$Home$page = function (model) {
 														]))
 												]),
 											header: A2(
-												rundis$elm_bootstrap$Bootstrap$Accordion$header,
-												_List_Nil,
+												rundis$elm_bootstrap$Bootstrap$Accordion$prependHeader,
+												_List_fromArray(
+													[
+														A2(
+														elm$html$Html$img,
+														_List_fromArray(
+															[
+																A2(elm$html$Html$Attributes$style, 'width', '50px'),
+																elm$html$Html$Attributes$src('img/grad-cap.png')
+															]),
+														_List_Nil)
+													]),
 												A2(
-													rundis$elm_bootstrap$Bootstrap$Accordion$toggle,
+													rundis$elm_bootstrap$Bootstrap$Accordion$header,
 													_List_Nil,
-													_List_fromArray(
-														[
-															elm$html$Html$text('Community Involvement')
-														]))),
+													A2(
+														rundis$elm_bootstrap$Bootstrap$Accordion$toggle,
+														_List_Nil,
+														_List_fromArray(
+															[
+																elm$html$Html$text('Courses')
+															])))),
 											id: 'card1',
 											options: _List_Nil
 										}),
@@ -10081,15 +10033,28 @@ var author$project$Home$page = function (model) {
 														]))
 												]),
 											header: A2(
-												rundis$elm_bootstrap$Bootstrap$Accordion$header,
-												_List_Nil,
+												rundis$elm_bootstrap$Bootstrap$Accordion$prependHeader,
+												_List_fromArray(
+													[
+														A2(
+														elm$html$Html$img,
+														_List_fromArray(
+															[
+																A2(elm$html$Html$Attributes$style, 'width', '50px'),
+																elm$html$Html$Attributes$src('img/grad-cap.png')
+															]),
+														_List_Nil)
+													]),
 												A2(
-													rundis$elm_bootstrap$Bootstrap$Accordion$toggle,
+													rundis$elm_bootstrap$Bootstrap$Accordion$header,
 													_List_Nil,
-													_List_fromArray(
-														[
-															elm$html$Html$text('Awards and Achievments')
-														]))),
+													A2(
+														rundis$elm_bootstrap$Bootstrap$Accordion$toggle,
+														_List_Nil,
+														_List_fromArray(
+															[
+																elm$html$Html$text('Extrcurriculars')
+															])))),
 											id: 'card2',
 											options: _List_Nil
 										}),
@@ -10132,7 +10097,7 @@ var author$project$Home$page = function (model) {
 														_List_Nil,
 														_List_fromArray(
 															[
-																elm$html$Html$text(' This accordion header has a picture')
+																elm$html$Html$text('More Information')
 															])))),
 											id: 'card3',
 											options: _List_Nil
@@ -10140,6 +10105,40 @@ var author$project$Home$page = function (model) {
 									]),
 								rundis$elm_bootstrap$Bootstrap$Accordion$withAnimation(
 									rundis$elm_bootstrap$Bootstrap$Accordion$config(author$project$Model$AccordionMsg))))
+						])),
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_fromArray(
+						[
+							rundis$elm_bootstrap$Bootstrap$Grid$Col$textAlign(rundis$elm_bootstrap$Bootstrap$Text$alignLgCenter)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$img,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'width', '200px'),
+									elm$html$Html$Attributes$src('img/school.png')
+								]),
+							_List_Nil)
+						]))
+				])),
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					rundis$elm_bootstrap$Bootstrap$Grid$col,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h6,
+							_List_fromArray(
+								[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my5]),
+							_List_Nil)
 						]))
 				])),
 			A2(
@@ -10158,7 +10157,7 @@ var author$project$Home$page = function (model) {
 								A2(
 								rundis$elm_bootstrap$Bootstrap$Carousel$Slide$config,
 								_List_Nil,
-								A2(author$project$Home$image, '500px', 'https://cschank.github.io/Surfer.jpg'))
+								A2(author$project$Home$image, '500px', 'img/school.png'))
 							]),
 						A2(
 							rundis$elm_bootstrap$Bootstrap$Carousel$config,
@@ -10176,7 +10175,7 @@ var author$project$Home$page = function (model) {
 					rundis$elm_bootstrap$Bootstrap$Button$button,
 					_List_fromArray(
 						[
-							rundis$elm_bootstrap$Bootstrap$Button$outlineSuccess,
+							rundis$elm_bootstrap$Bootstrap$Button$success,
 							rundis$elm_bootstrap$Bootstrap$Button$attrs(
 							_List_fromArray(
 								[
@@ -10199,7 +10198,7 @@ var author$project$Home$page = function (model) {
 								rundis$elm_bootstrap$Bootstrap$Button$button,
 								_List_fromArray(
 									[
-										rundis$elm_bootstrap$Bootstrap$Button$outlinePrimary,
+										rundis$elm_bootstrap$Bootstrap$Button$primary,
 										rundis$elm_bootstrap$Bootstrap$Button$attrs(
 										_List_fromArray(
 											[
@@ -10292,7 +10291,7 @@ var author$project$Main$view = function (model) {
 		title: function () {
 			var _n0 = model.page;
 			if (_n0.$ === 'Home') {
-				return 'Page (change me in main.elm)';
+				return 'Resume Template';
 			} else {
 				return 'Page Not Found';
 			}

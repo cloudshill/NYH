@@ -146,7 +146,7 @@ view : Model -> Browser.Document Msg
 view model =
     { title = case model.page of
           Home ->
-              "Page (change me in main.elm)"
+              "Resume Template"
 
           NotFound ->
               "Page Not Found"

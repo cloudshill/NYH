@@ -54,12 +54,12 @@ page model =
         ]
     , Grid.row []
         [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some stuff here (with an offset)"
+            [ text "- Some stuff here"
             ]
         ]
     , Grid.row []
         [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some more stuff (this has an offset too)"
+            [ text "- Some more stuff"
             ]
         ]
     , Grid.row [] --this is an empty row (to add blank space)
@@ -80,12 +80,12 @@ page model =
         ]
     , Grid.row []
         [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some stuff here (with an offset)"
+            [ text "- Some stuff here"
             ]
         ]
     , Grid.row []
         [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some more stuff (this has an offset too)"
+            [ text "- Some more stuff"
             ]
         ]
     , Grid.row [] --this is an empty row (to add empty space)
@@ -103,40 +103,27 @@ page model =
             a [target "_blank", href "https://www.google.ca/"] [h5 [ style "font-weight" "bold"][ text "School Name with link"]]
             ]
         , Grid.col [Col.textAlign Text.alignLgRight]
-            [ text "Date"
+            [ text "StartYear - EndYear"
             ]
         ]
     , Grid.row []
         [ Grid.col []
-            [ a [target "_blank", href "https://www.google.ca/"] [ text "This is also a link"]]
+            [ h3 [] [text " "]]
         ]
     , Grid.row []
-        [ Grid.col []
-            [ text "This picture has a link:"
-            , a [target "_blank", href "https://www.google.ca/"] [img [style "width" "150px", src "img/school.png"] []]
-            ]
-        , Grid.col []
-            [ text "This is just a picture:"
-            , img [style "width" "200px",src "img/grad-cap.png"] []
-            ]
-        ]
-    , Grid.row [] --this is an empty row (to add empty space)
-        [ Grid.col []
-            [ h6[Spacing.my5][] --change spacing number to make empty row bigger or smaller
-            ]
-        ]
-
-    --ADD ACCORDION - edit what your accordion looks like
-    , Grid.row []
-        [ Grid.col []
-            [ Accordion.config AccordionMsg
+        [ Grid.col [Col.sm9]
+            [ text "Some information here"
+            , Accordion.config AccordionMsg
                 |> Accordion.withAnimation
                 |> Accordion.cards
                     [ Accordion.card
                         { id = "card1" --each accordion card needs an id
                         , options = []
                         , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Community Involvement" ]
+                            Accordion.header []
+                                (Accordion.toggle [] [ text "Courses"] )
+                                |> Accordion.prependHeader
+                                    [ img [style "width" "50px",src "img/grad-cap.png"] [] ]
                         , blocks =
                             [ Accordion.block []
                                 [ Block.text [] [ text "Text inside card 1" ] ]
@@ -146,7 +133,10 @@ page model =
                         { id = "card2"
                         , options = []
                         , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Awards and Achievments" ]
+                              Accordion.header []
+                                  (Accordion.toggle [] [ text "Extrcurriculars"] )
+                                  |> Accordion.prependHeader
+                                      [ img [style "width" "50px",src "img/grad-cap.png"] [] ]
                         , blocks =
                             [ Accordion.block []
                                 [ Block.text [] [ text "Text inside card 2" ] ]
@@ -157,7 +147,7 @@ page model =
                         , options = []
                         , header =
                             Accordion.header []
-                                (Accordion.toggle [] [ text " This accordion header has a picture"] )
+                                (Accordion.toggle [] [ text "More Information"] )
                                 |> Accordion.prependHeader
                                     [ img [style "width" "50px",src "img/grad-cap.png"] [] ]
                         , blocks =
@@ -169,18 +159,26 @@ page model =
                     ]
                 |> Accordion.view model.accordionState
             ]
+        , Grid.col [Col.textAlign Text.alignLgCenter]
+            [ img [style "width" "200px",src "img/school.png"] []
+            ]
+        ]
+    , Grid.row [] --this is an empty row (to add empty space)
+        [ Grid.col []
+            [ h6[Spacing.my5][] --change spacing number to make empty row bigger or smaller
+            ]
         ]
         ,Carousel.config CarouselMsg [style "height" "500px"]
                 |> Carousel.slides
                     [ Slide.config [] (image "500px" "https://c1.staticflickr.com/8/7018/6446600053_14c322b898_b.jpg")
-                    , Slide.config [] (image "500px" "https://cschank.github.io/Surfer.jpg")
+                    , Slide.config [] (image "500px" "img/school.png")
                     ]
                 |> Carousel.withControls
                 |> Carousel.withIndicators
                 |> Carousel.view model.carouselState
       , div []
         [Button.button
-            [ Button.outlineSuccess
+            [ Button.success
             , Button.attrs [ onClick <| ShowModal ]
             ]
             [ text "Open Modal"]
@@ -192,7 +190,7 @@ page model =
             |> Modal.body [] [ p [] [ text "This is a pop-up for you !"] ]
             |> Modal.footer []
                 [ Button.button
-                    [ Button.outlinePrimary
+                    [ Button.primary
                     , Button.attrs [ onClick CloseModal ]
                     ]
                     [ text "Close" ]
