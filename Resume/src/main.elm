@@ -12,17 +12,6 @@ import Bootstrap.Navbar as Navbar
 import Bootstrap.Grid as Grid
 import Bootstrap.Utilities.Spacing as Spacing
 import Task
-
---ADD ACCORDION imports to main.elm, model.elm, and the page using accordion (ex. Home.elm)
-import Bootstrap.Accordion as Accordion
-import Bootstrap.Card.Block as Block
-
---ADD CAROUSEL imports to main.elm, model.elm, and the page using carousel (ex. Home.elm)
-import Bootstrap.Carousel as Carousel
-import Bootstrap.Carousel.Slide as Slide
-
-import Bootstrap.Modal as Modal
-
 import Bootstrap.Button as Button
 import Bootstrap.ButtonGroup as ButtonGroup
 
@@ -56,10 +45,6 @@ init flags url key =
             urlUpdate url { navKey = key
                           , navState = navState
                           , page = Home
-                          , accordionState = Accordion.initialStateCardOpen "" --ADD ACCORDION - what does accordion look like when you open the page?
-                            --Accordion.initialStateCardOpen "card1" -- if you put a card id, the accordion starts with that card open
-                          , carouselState = Carousel.initialState
-                          , modalVisibility = Modal.hidden
                           }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
@@ -68,10 +53,7 @@ init flags url key =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    --ADD ACCORDION - now that there are multiple subscriptions, they need to be grouped in Sub.batch
     Sub.batch [Navbar.subscriptions model.navState NavMsg
-    , Accordion.subscriptions model.accordionState AccordionMsg
-    , Carousel.subscriptions model.carouselState CarouselMsg
     ]
 
 
@@ -96,25 +78,6 @@ update msg model =
             )
 
         NoOp -> (model, Cmd.none)
-
-        --ADD ACCORDION
-        AccordionMsg state ->
-            ( { model | accordionState = state }
-            , Cmd.none
-            )
-
-        --ADD CAROUSEL
-        CarouselMsg state ->
-            ( {model | carouselState = Carousel.update state model.carouselState }
-            , Cmd.none
-            )
-
-        --ADD MODAL
-        CloseModal ->
-            ( { model | modalVisibility = Modal.hidden } , Cmd.none )
-
-        ShowModal ->
-            ( { model | modalVisibility = Modal.shown } , Cmd.none )
 
 
 urlUpdate : Url -> Model -> ( Model, Cmd Msg )

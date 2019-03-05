@@ -8,95 +8,120 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import Bootstrap.Text as Text
 import Bootstrap.Utilities.Spacing as Spacing
-
---ADD ACCORDION imports to main.elm, model.elm, and the page using accordion (ex. Home.elm)
-import Bootstrap.Accordion as Accordion
-import Bootstrap.Card.Block as Block
-
---ADD CAROUSEL imports to main.elm, model.elm, and the page using carousel (ex. Home.elm)
-import Bootstrap.Carousel as Carousel
-import Bootstrap.Carousel.Slide as Slide
-
-import Bootstrap.Modal as Modal
-
 import Bootstrap.Button as Button
 import Bootstrap.ButtonGroup as ButtonGroup
+import Bootstrap.Progress as Progress
+import Bootstrap.Card as Card
+import Bootstrap.Card.Block as Block
 
 
 
 import Model exposing (Model,Msg(..))
 
+clr1 : String
+clr1 = "rgb(25,85,140)"
+
+clr2 : String
+clr2 = "rgb(175,200,225)"
+
+--experience : String -> String -> String -> List String ->
+experience jobTitle location dates stuff =
+    [ Grid.row []
+        [ Grid.col [Col.sm8]
+            [ h5 [ style "font-weight" "bold"][ text jobTitle]
+            ]
+        , Grid.col []
+            [ text location
+            ]
+        , Grid.col [Col.textAlign Text.alignLgRight]
+            [ text dates
+            ]
+        ]
+    ] ++
+    ( List.map (\ oneStuff -> Grid.row []
+        [ Grid.col [Col.offsetSm1]
+            [ text oneStuff
+            ]
+        ]
+               )
+        stuff
+    )
+
+language lang fluency =
+    [ Grid.row []
+        [ Grid.col [Col.sm2]
+            [ h5 [] [text lang]]
+        , Grid.col [Col.sm4]
+            [ Progress.progress [ Progress.attrs[style "background-color" clr2], Progress.value fluency ]
+            ]
+        ]
+    ]
+
+smallBlank = Grid.row [] --this is an empty row (to add blank space)
+              [ Grid.col []
+                  [ h6[Spacing.my3][text " "] --change spacing number to make empty row bigger or smaller (0-5)
+                  ]
+              ]
+
+largeBlank = Grid.row [] --this is an empty row (to add blank space)
+              [ Grid.col []
+                  [ h6[Spacing.my5][text " "] --change spacing number to make empty row bigger or smaller (0-5)
+                  ]
+              ]
+
 
 page : Model -> List (Html Msg)
 page model =
     [ --HEADER
-    h1 [Spacing.mt5, Spacing.mb2, style "color" "maroon"] [ text "Name" ] --https://htmlcolorcodes.com/color-names/ for more colour names (you can also use rgb)
-    , h4 [][text "Additional information"]
-    , Grid.row [Row.attrs [ style "background-color" "rgb(121,19,65)" ]] --draws a line (empty row with rgb colour - you can also use colour names from link above)
+    Grid.row []
+        [ Grid.col []
+            [ h1 [Spacing.mt5, Spacing.mb2, style "color" clr1] [ text "Name" ]
+            , h4 [][text "Additional information"]
+            ]
+        , Grid.col [Col.sm4]
+            [ h3 [Spacing.my3] [text " "]
+            , Card.config []
+                |> Card.block []
+                    [ Block.titleH3 [style "font-weight" "bold"] [ text "Contact" ]
+                    , Block.text [] [ text "Email: ", a [target "_blank", href "mailto:myemail@gmail.com"] [text "myemail@gmail.com"]]
+                    ]
+                |> Card.view
+            ]
+        ]
+    , Grid.row [Row.attrs [ style "background-color" clr2 ]] --draws a line (empty row with rgb colour - you can also use colour names from link above)
            [ Grid.col []
                [
                ]
             ]
-
-
     --EXPERIENCE
-    , h2 [Spacing.mt5, Spacing.mb2] [text "Experience"]
-    , Grid.row []
-        [ Grid.col [Col.sm3] --increase number after sm to make this column bigger (range 1-12)
-            [ h5 [ style "font-weight" "bold"][ text "Job title"]
-            ]
-        , Grid.col []
-            [ text "Location"
-            ]
-        , Grid.col [Col.textAlign Text.alignLgRight]
-            [ text "Date"
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some stuff here"
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some more stuff"
-            ]
-        ]
-    , Grid.row [] --this is an empty row (to add blank space)
-        [ Grid.col []
-            [ h6[Spacing.my3][] --change spacing number to make empty row bigger or smaller (0-5)
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col [Col.sm3] --increase number after sm to make this column bigger (range 1-12)
-            [ h5 [ style "font-weight" "bold"][ text "Job title"]
-            ]
-        , Grid.col []
-            [ text "Location"
-            ]
-        , Grid.col [Col.textAlign Text.alignLgRight]
-            [ text "Date"
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some stuff here"
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col [Col.offsetSm1] --increase number after offsetSm to make the offset bigger (range 0-11)
-            [ text "- Some more stuff"
-            ]
-        ]
-    , Grid.row [] --this is an empty row (to add empty space)
-        [ Grid.col []
-            [ h6[Spacing.my5][] --change spacing number to make empty row bigger or smaller
-            ]
-        ]
-
-
+    , h2 [Spacing.mt5, Spacing.mb2, style "color" clr1] [text "Experience"]
+    ]
+    ++
+    experience "Job Title 1" "Location" "Years"
+          ["- More information"
+          ,"- More information"
+          ,"- More information"
+          ]
+    ++
+    [ smallBlank ]
+    ++
+    experience "Job Title 2" "Location" "Years"
+          ["- More information"
+          ,"- More information"
+          ,"- More information"
+          ]
+    ++
+    [ smallBlank ]
+    ++
+    experience "Job Title 3" "Location" "Years"
+          ["- More information"
+          ,"- More information"
+          ,"- More information"
+          ]
+    ++
+    [ largeBlank
     --EDUCATION
-    , h2 [Spacing.mt3, Spacing.mb2] [text "Education"]
+    , h2 [Spacing.mt3, Spacing.mb2, style "color" clr1] [text "Education"]
     , Grid.row []
         [ Grid.col [Col.sm8] --increase number after sm to make this column bigger (range 1-12)
             [ --use 'a [target "_blank", href "link"] [text/picture]' to create a link
@@ -108,96 +133,26 @@ page model =
         ]
     , Grid.row []
         [ Grid.col []
-            [ h3 [] [text " "]]
+            [ text "Extracurriculars"]
         ]
-    , Grid.row []
-        [ Grid.col [Col.sm9]
-            [ text "Some information here"
-            , Accordion.config AccordionMsg
-                |> Accordion.withAnimation
-                |> Accordion.cards
-                    [ Accordion.card
-                        { id = "card1" --each accordion card needs an id
-                        , options = []
-                        , header =
-                            Accordion.header []
-                                (Accordion.toggle [] [ text "Courses"] )
-                                |> Accordion.prependHeader
-                                    [ img [style "width" "50px",src "img/grad-cap.png"] [] ]
-                        , blocks =
-                            [ Accordion.block []
-                                [ Block.text [] [ text "Text inside card 1" ] ]
-                            ]
-                        }
-                    , Accordion.card
-                        { id = "card2"
-                        , options = []
-                        , header =
-                              Accordion.header []
-                                  (Accordion.toggle [] [ text "Extrcurriculars"] )
-                                  |> Accordion.prependHeader
-                                      [ img [style "width" "50px",src "img/grad-cap.png"] [] ]
-                        , blocks =
-                            [ Accordion.block []
-                                [ Block.text [] [ text "Text inside card 2" ] ]
-                            ]
-                        }
-                    , Accordion.card
-                        { id = "card3"
-                        , options = []
-                        , header =
-                            Accordion.header []
-                                (Accordion.toggle [] [ text "More Information"] )
-                                |> Accordion.prependHeader
-                                    [ img [style "width" "50px",src "img/grad-cap.png"] [] ]
-                        , blocks =
-                            [ Accordion.block []
-                                [ Block.text [] [ text "Text inside card 3" ]
-                                ]
-                            ]
-                        }
-                    ]
-                |> Accordion.view model.accordionState
-            ]
-        , Grid.col [Col.textAlign Text.alignLgCenter]
-            [ img [style "width" "200px",src "img/school.png"] []
-            ]
-        ]
-    , Grid.row [] --this is an empty row (to add empty space)
-        [ Grid.col []
-            [ h6[Spacing.my5][] --change spacing number to make empty row bigger or smaller
-            ]
-        ]
-        ,Carousel.config CarouselMsg [style "height" "500px"]
-                |> Carousel.slides
-                    [ Slide.config [] (image "500px" "https://c1.staticflickr.com/8/7018/6446600053_14c322b898_b.jpg")
-                    , Slide.config [] (image "500px" "img/school.png")
-                    ]
-                |> Carousel.withControls
-                |> Carousel.withIndicators
-                |> Carousel.view model.carouselState
-      , div []
-        [Button.button
-            [ Button.success
-            , Button.attrs [ onClick <| ShowModal ]
-            ]
-            [ text "Open Modal"]
-
-        , Modal.config CloseModal
-            |> Modal.small
-            |> Modal.hideOnBackdropClick True
-            |> Modal.h3 [] [ text "Pop-up header" ]
-            |> Modal.body [] [ p [] [ text "This is a pop-up for you !"] ]
-            |> Modal.footer []
-                [ Button.button
-                    [ Button.primary
-                    , Button.attrs [ onClick CloseModal ]
-                    ]
-                    [ text "Close" ]
-                ]
-            |> Modal.view model.modalVisibility
-        ]
-
     ]
-
-image h url = Slide.image [style "height" h, style "margin" "auto"] url
+    ++
+    [ largeBlank
+    --LANGUAGES
+    , h2 [Spacing.mt3, Spacing.mb2, style "color" clr1] [text "Languages"]
+    ]
+    ++
+    language "English" 100
+    ++
+    language "French" 67
+    ++
+    language "Not so fluent" 33
+    ++
+    [ largeBlank
+    , largeBlank
+    , Grid.row [Row.attrs[style "background-color" clr2]]
+           [ Grid.col []
+               [h1[] [text " "]
+               ]
+            ]
+    ]
