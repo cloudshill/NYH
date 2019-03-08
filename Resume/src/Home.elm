@@ -2,7 +2,7 @@ module Home exposing (page)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick,onInput)
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
@@ -14,9 +14,10 @@ import Bootstrap.Progress as Progress
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 
+import Dict
 
 
-import Model exposing (Model,Msg(..))
+import Model exposing (..)
 
 clr1 : String
 clr1 = "rgb(25,85,140)"
@@ -24,11 +25,54 @@ clr1 = "rgb(25,85,140)"
 clr2 : String
 clr2 = "rgb(175,200,225)"
 
---experience : String -> String -> String -> List String ->
-experience jobTitle location dates stuff =
+editJobTitle : Int -> Experience -> String -> Msg
+editJobTitle n (Experience _ location dates stuff) str =
+    ChangeExperience n <| Experience str location dates stuff
+
+editDates : Int -> Experience -> String -> Msg
+editDates n (Experience jobTitle location _ stuff) str =
+    ChangeExperience n <| Experience jobTitle location str stuff
+
+editLocation : Int -> Experience -> String -> Msg
+editLocation n (Experience jobTitle _ dates stuff) str =
+    ChangeExperience n <| Experience jobTitle str dates stuff
+
+addDuty : Int -> Experience -> Msg
+addDuty n (Experience jobTitle location dates stuff) =
+    ChangeExperience n <| Experience jobTitle location dates (stuff ++ ["Duty " ++ String.fromInt (List.length stuff + 1)])
+
+experience : Bool -> Bool -> (Int, Experience) -> List (Html Msg)
+experience editing editable (n, exp) =
+  let
+    (Experience jobTitle location dates stuff) = exp
+  in
+  if editing then
+    [ Grid.row []
+        [ Grid.col [Col.sm7]
+            [ h5 [ style "font-weight" "bold"][ input [value jobTitle, onInput (editJobTitle n exp), style "width" "100%"] [] ]
+            ]
+        , Grid.col []
+            [ input [value location, onInput (editLocation n exp), style "width" "100%"] []
+            ]
+        , Grid.col [Col.textAlign Text.alignLgRight]
+            [ input [value dates, onInput (editDates n exp), style "width" "100%"] []
+            ]
+        ]
+                , button [onClick SaveExperience] [text "Save"]
+    ] ++
+    ( List.map (\ oneStuff -> Grid.row []
+        [ Grid.col [Col.offsetSm1]
+            [ input [value oneStuff, style "width" "100%"] []
+            ]
+        ]
+               )
+        stuff
+    ) ++
+      [button [onClick (addDuty n exp)] [text "New Duty"]]
+  else
     [ Grid.row []
         [ Grid.col [Col.sm8]
-            [ h5 [ style "font-weight" "bold"][ text jobTitle]
+            [ h5 [ style "font-weight" "bold"][ text jobTitle ]
             ]
         , Grid.col []
             [ text location
@@ -36,7 +80,9 @@ experience jobTitle location dates stuff =
         , Grid.col [Col.textAlign Text.alignLgRight]
             [ text dates
             ]
+        
         ]
+        , button [onClick (EditExperience n)] [text "Edit"]
     ] ++
     ( List.map (\ oneStuff -> Grid.row []
         [ Grid.col [Col.offsetSm1]
@@ -97,29 +143,10 @@ page model =
     , h2 [Spacing.mt5, Spacing.mb2, style "color" clr1] [text "Experience"]
     ]
     ++
-    experience "Job Title 1" "Location" "Years"
-          ["- More information"
-          ,"- More information"
-          ,"- More information"
-          ]
+    List.concat (List.map (\(n, exp) -> experience (model.editingMode == EditingExperience n) True (n, exp)) (Dict.toList model.experience))
     ++
-    [ smallBlank ]
-    ++
-    experience "Job Title 2" "Location" "Years"
-          ["- More information"
-          ,"- More information"
-          ,"- More information"
-          ]
-    ++
-    [ smallBlank ]
-    ++
-    experience "Job Title 3" "Location" "Years"
-          ["- More information"
-          ,"- More information"
-          ,"- More information"
-          ]
-    ++
-    [ largeBlank
+    [ button [onClick AddExperience] [text "New..."]
+    , largeBlank
     --EDUCATION
     , h2 [Spacing.mt3, Spacing.mb2, style "color" clr1] [text "Education"]
     , Grid.row []

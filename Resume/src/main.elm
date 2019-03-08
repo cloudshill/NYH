@@ -15,9 +15,11 @@ import Task
 import Bootstrap.Button as Button
 import Bootstrap.ButtonGroup as ButtonGroup
 
+import Dict
 
 
-import Model exposing(Model,Page(..),Msg(..))
+
+import Model exposing(..)
 import Home
 
 type alias Flags =
@@ -45,6 +47,9 @@ init flags url key =
             urlUpdate url { navKey = key
                           , navState = navState
                           , page = Home
+                          , experience = Dict.fromList [(0,Experience "Job Title" "Location" "Date" ["Duty 1", "Duty 2"])]
+                          , languages = []
+                          , editingMode = EditingExperience 1
                           }
     in
         ( model, Cmd.batch [ urlCmd, navCmd ] )
@@ -78,6 +83,24 @@ update msg model =
             )
 
         NoOp -> (model, Cmd.none)
+
+        AddExperience -> 
+            ( { model | experience = Dict.insert 
+                                        (Dict.size model.experience) 
+                                        (Experience "Job Title" "Location" "Dates" ["Duty 1", "Duty 2"]) 
+                                        model.experience
+                 }
+            , Cmd.none
+            )
+
+        EditExperience n ->
+            ({ model | editingMode = EditingExperience n }, Cmd.none)
+
+        SaveExperience ->
+            ({ model | editingMode = NotEditing}, Cmd.none)
+
+        ChangeExperience n exp ->
+            ({ model | experience = Dict.insert n exp model.experience }, Cmd.none)
 
 
 urlUpdate : Url -> Model -> ( Model, Cmd Msg )
