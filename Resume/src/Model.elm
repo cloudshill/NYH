@@ -18,7 +18,9 @@ type alias Model =
     , page : Page
     , navState : Navbar.State
     , name : Name
+    , info : Info
     , experience : Dict Int Experience
+    , education : Dict Int Education
     , languages : Dict Int Language
     , editingMode : EditingMode
     }
@@ -26,35 +28,47 @@ type alias Model =
 type EditingMode =
       NotEditing
     | EditingName
+    | EditingInfo
     | EditingExperience Int
+    | EditingEducation Int
     | EditingLanguage Int
 
 type Page
     = Home
     | NotFound
 
+type Name =
+    Name String
+
+type Info =
+    Info String
+
 type Experience =
     Experience String {-jobTitle-} String {-location-} String {-dates-} (List String) {-stuff-}
 
+type Education =
+    Education String {-school-} String {-schoolDates-} String {-schoolInfo-}
+
+
 type Language =
     Language String {-language-} Float {-fluency out of 100-}
-
-type Name =
-    Name String
 
 type Msg
     = UrlChange Url
     | ClickedLink UrlRequest
     | NavMsg Navbar.State
     | NoOp
+    | Save
     | EditName
     | ChangeName Name
-    | SaveName
+    | EditInfo
+    | ChangeInfo Info
     | AddExperience
     | EditExperience Int
-    | SaveExperience
     | ChangeExperience Int Experience
+    | AddEducation
+    | EditEducation Int
+    | ChangeEducation Int Education
     | AddLanguage
     | EditLanguage Int
-    | SaveLanguage
     | ChangeLanguage Int Language

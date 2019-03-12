@@ -5873,10 +5873,17 @@ var author$project$Main$urlUpdate = F2(
 var author$project$Model$EditingExperience = function (a) {
 	return {$: 'EditingExperience', a: a};
 };
+var author$project$Model$Education = F3(
+	function (a, b, c) {
+		return {$: 'Education', a: a, b: b, c: c};
+	});
 var author$project$Model$Experience = F4(
 	function (a, b, c, d) {
 		return {$: 'Experience', a: a, b: b, c: c, d: d};
 	});
+var author$project$Model$Info = function (a) {
+	return {$: 'Info', a: a};
+};
 var author$project$Model$Language = F2(
 	function (a, b) {
 		return {$: 'Language', a: a, b: b};
@@ -5947,6 +5954,13 @@ var author$project$Main$init = F3(
 			url,
 			{
 				editingMode: author$project$Model$EditingExperience(1),
+				education: elm$core$Dict$fromList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							0,
+							A3(author$project$Model$Education, 'School', 'Date', 'Additional information'))
+						])),
 				experience: elm$core$Dict$fromList(
 					_List_fromArray(
 						[
@@ -5960,6 +5974,7 @@ var author$project$Main$init = F3(
 								_List_fromArray(
 									['Duty 1', 'Duty 2'])))
 						])),
+				info: author$project$Model$Info('Additional information'),
 				languages: elm$core$Dict$fromList(
 					_List_fromArray(
 						[
@@ -6559,6 +6574,10 @@ var author$project$Main$subscriptions = function (model) {
 				A2(rundis$elm_bootstrap$Bootstrap$Navbar$subscriptions, model.navState, author$project$Model$NavMsg)
 			]));
 };
+var author$project$Model$EditingEducation = function (a) {
+	return {$: 'EditingEducation', a: a};
+};
+var author$project$Model$EditingInfo = {$: 'EditingInfo'};
 var author$project$Model$EditingLanguage = function (a) {
 	return {$: 'EditingLanguage', a: a};
 };
@@ -6662,24 +6681,37 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'NoOp':
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			case 'Save':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{editingMode: author$project$Model$NotEditing}),
+					elm$core$Platform$Cmd$none);
 			case 'EditName':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{editingMode: author$project$Model$EditingName}),
 					elm$core$Platform$Cmd$none);
-			case 'SaveName':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{editingMode: author$project$Model$NotEditing}),
-					elm$core$Platform$Cmd$none);
 			case 'ChangeName':
-				var string = msg.a;
+				var n = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{name: model.name}),
+						{name: n}),
+					elm$core$Platform$Cmd$none);
+			case 'EditInfo':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{editingMode: author$project$Model$EditingInfo}),
+					elm$core$Platform$Cmd$none);
+			case 'ChangeInfo':
+				var i = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{info: i}),
 					elm$core$Platform$Cmd$none);
 			case 'AddExperience':
 				return _Utils_Tuple2(
@@ -6708,12 +6740,6 @@ var author$project$Main$update = F2(
 							editingMode: author$project$Model$EditingExperience(n)
 						}),
 					elm$core$Platform$Cmd$none);
-			case 'SaveExperience':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{editingMode: author$project$Model$NotEditing}),
-					elm$core$Platform$Cmd$none);
 			case 'ChangeExperience':
 				var n = msg.a;
 				var exp = msg.b;
@@ -6722,6 +6748,37 @@ var author$project$Main$update = F2(
 						model,
 						{
 							experience: A3(elm$core$Dict$insert, n, exp, model.experience)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 'AddEducation':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							education: A3(
+								elm$core$Dict$insert,
+								elm$core$Dict$size(model.education),
+								A3(author$project$Model$Education, 'School', 'Dates', 'Additional information'),
+								model.education)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 'EditEducation':
+				var n = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							editingMode: author$project$Model$EditingEducation(n)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 'ChangeEducation':
+				var n = msg.a;
+				var ed = msg.b;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							education: A3(elm$core$Dict$insert, n, ed, model.education)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'AddLanguage':
@@ -6745,12 +6802,6 @@ var author$project$Main$update = F2(
 							editingMode: author$project$Model$EditingLanguage(n)
 						}),
 					elm$core$Platform$Cmd$none);
-			case 'SaveLanguage':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{editingMode: author$project$Model$NotEditing}),
-					elm$core$Platform$Cmd$none);
 			default:
 				var n = msg.a;
 				var lang = msg.b;
@@ -6763,69 +6814,44 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 		}
 	});
+var author$project$Home$buttonClr = 'rgb(20,130,175)';
 var author$project$Home$clr1 = 'rgb(25,85,140)';
 var author$project$Home$clr2 = 'rgb(175,200,225)';
-var author$project$Model$ChangeExperience = F2(
+var author$project$Model$ChangeEducation = F2(
 	function (a, b) {
-		return {$: 'ChangeExperience', a: a, b: b};
+		return {$: 'ChangeEducation', a: a, b: b};
 	});
-var author$project$Home$addDuty = F2(
-	function (n, _n0) {
-		var jobTitle = _n0.a;
-		var location = _n0.b;
-		var dates = _n0.c;
-		var stuff = _n0.d;
-		return A2(
-			author$project$Model$ChangeExperience,
-			n,
-			A4(
-				author$project$Model$Experience,
-				jobTitle,
-				location,
-				dates,
-				_Utils_ap(
-					stuff,
-					_List_fromArray(
-						[
-							'Duty ' + elm$core$String$fromInt(
-							elm$core$List$length(stuff) + 1)
-						]))));
-	});
-var author$project$Home$editDates = F3(
+var author$project$Home$editSchool = F3(
 	function (n, _n0, str) {
-		var jobTitle = _n0.a;
-		var location = _n0.b;
-		var stuff = _n0.d;
+		var schoolDates = _n0.b;
+		var schoolInfo = _n0.c;
 		return A2(
-			author$project$Model$ChangeExperience,
+			author$project$Model$ChangeEducation,
 			n,
-			A4(author$project$Model$Experience, jobTitle, location, str, stuff));
+			A3(author$project$Model$Education, str, schoolDates, schoolInfo));
 	});
-var author$project$Home$editJobTitle = F3(
+var author$project$Home$editSchoolDates = F3(
 	function (n, _n0, str) {
-		var location = _n0.b;
-		var dates = _n0.c;
-		var stuff = _n0.d;
+		var school = _n0.a;
+		var schoolInfo = _n0.c;
 		return A2(
-			author$project$Model$ChangeExperience,
+			author$project$Model$ChangeEducation,
 			n,
-			A4(author$project$Model$Experience, str, location, dates, stuff));
+			A3(author$project$Model$Education, school, str, schoolInfo));
 	});
-var author$project$Home$editLocation = F3(
+var author$project$Home$editSchoolInfo = F3(
 	function (n, _n0, str) {
-		var jobTitle = _n0.a;
-		var dates = _n0.c;
-		var stuff = _n0.d;
+		var school = _n0.a;
+		var schoolDates = _n0.b;
 		return A2(
-			author$project$Model$ChangeExperience,
+			author$project$Model$ChangeEducation,
 			n,
-			A4(author$project$Model$Experience, jobTitle, str, dates, stuff));
+			A3(author$project$Model$Education, school, schoolDates, str));
 	});
-var author$project$Model$EditExperience = function (a) {
-	return {$: 'EditExperience', a: a};
+var author$project$Model$EditEducation = function (a) {
+	return {$: 'EditEducation', a: a};
 };
-var author$project$Model$SaveExperience = {$: 'SaveExperience'};
-var elm$html$Html$button = _VirtualDom_node('button');
+var author$project$Model$Save = {$: 'Save'};
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
@@ -6890,6 +6916,193 @@ var elm$html$Html$Events$onInput = function (tagger) {
 			elm$html$Html$Events$alwaysStop,
 			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
 };
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
+	return {$: 'Attrs', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$attrs = function (attrs_) {
+	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs(attrs_);
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
+	switch (size.$) {
+		case 'XS':
+			return elm$core$Maybe$Nothing;
+		case 'SM':
+			return elm$core$Maybe$Just('sm');
+		case 'MD':
+			return elm$core$Maybe$Just('md');
+		case 'LG':
+			return elm$core$Maybe$Just('lg');
+		default:
+			return elm$core$Maybe$Just('xl');
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size)
+					});
+			case 'Coloring':
+				var coloring = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						coloring: elm$core$Maybe$Just(coloring)
+					});
+			case 'Block':
+				return _Utils_update(
+					options,
+					{block: true});
+			case 'Disabled':
+				var val = modifier.a;
+				return _Utils_update(
+					options,
+					{disabled: val});
+			default:
+				var attrs = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions = {attributes: _List_Nil, block: false, coloring: elm$core$Maybe$Nothing, disabled: false, size: elm$core$Maybe$Nothing};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass = function (role) {
+	switch (role.$) {
+		case 'Primary':
+			return 'primary';
+		case 'Secondary':
+			return 'secondary';
+		case 'Success':
+			return 'success';
+		case 'Info':
+			return 'info';
+		case 'Warning':
+			return 'warning';
+		case 'Danger':
+			return 'danger';
+		case 'Dark':
+			return 'dark';
+		case 'Light':
+			return 'light';
+		default:
+			return 'link';
+	}
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes = function (modifiers) {
+	var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$Internal$Button$applyModifier, rundis$elm_bootstrap$Bootstrap$Internal$Button$defaultOptions, modifiers);
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('btn', true),
+						_Utils_Tuple2('btn-block', options.block),
+						_Utils_Tuple2('disabled', options.disabled)
+					])),
+				elm$html$Html$Attributes$disabled(options.disabled)
+			]),
+		_Utils_ap(
+			function () {
+				var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+				if (_n0.$ === 'Just') {
+					var s = _n0.a;
+					return _List_fromArray(
+						[
+							elm$html$Html$Attributes$class('btn-' + s)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}(),
+			_Utils_ap(
+				function () {
+					var _n1 = options.coloring;
+					if (_n1.$ === 'Just') {
+						if (_n1.a.$ === 'Roled') {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						} else {
+							var role = _n1.a.a;
+							return _List_fromArray(
+								[
+									elm$html$Html$Attributes$class(
+									'btn-outline-' + rundis$elm_bootstrap$Bootstrap$Internal$Button$roleClass(role))
+								]);
+						}
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes)));
+};
+var rundis$elm_bootstrap$Bootstrap$Button$button = F2(
+	function (options, children) {
+		return A2(
+			elm$html$Html$button,
+			rundis$elm_bootstrap$Bootstrap$Internal$Button$buttonAttributes(options),
+			children);
+	});
+var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Size = function (a) {
+	return {$: 'Size', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$small = rundis$elm_bootstrap$Bootstrap$Internal$Button$Size(rundis$elm_bootstrap$Bootstrap$General$Internal$SM);
 var rundis$elm_bootstrap$Bootstrap$Grid$Column = function (a) {
 	return {$: 'Column', a: a};
 };
@@ -7173,21 +7386,6 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
-	switch (size.$) {
-		case 'XS':
-			return elm$core$Maybe$Nothing;
-		case 'SM':
-			return elm$core$Maybe$Just('sm');
-		case 'MD':
-			return elm$core$Maybe$Just('md');
-		case 'LG':
-			return elm$core$Maybe$Just('lg');
-		default:
-			return elm$core$Maybe$Just('xl');
-	}
-};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$columnCountOption = function (size) {
 	switch (size.$) {
 		case 'Col':
@@ -7715,7 +7913,251 @@ var rundis$elm_bootstrap$Bootstrap$Grid$row = F2(
 			rundis$elm_bootstrap$Bootstrap$Grid$Internal$rowAttributes(options),
 			A2(elm$core$List$map, rundis$elm_bootstrap$Bootstrap$Grid$renderCol, cols));
 	});
-var rundis$elm_bootstrap$Bootstrap$General$Internal$SM = {$: 'SM'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8 = {$: 'Col8'};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth = function (a) {
+	return {$: 'ColWidth', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
+	function (size, count) {
+		return rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth(
+			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
+	});
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm8 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8);
+var rundis$elm_bootstrap$Bootstrap$Grid$Internal$TextAlign = function (a) {
+	return {$: 'TextAlign', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Grid$Col$textAlign = function (align) {
+	return rundis$elm_bootstrap$Bootstrap$Grid$Internal$TextAlign(align);
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Text$Right = {$: 'Right'};
+var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
+var rundis$elm_bootstrap$Bootstrap$Text$alignLg = function (dir) {
+	return {dir: dir, size: rundis$elm_bootstrap$Bootstrap$General$Internal$LG};
+};
+var rundis$elm_bootstrap$Bootstrap$Text$alignLgRight = rundis$elm_bootstrap$Bootstrap$Text$alignLg(rundis$elm_bootstrap$Bootstrap$Internal$Text$Right);
+var author$project$Home$education = F3(
+	function (editing, editable, _n0) {
+		var n = _n0.a;
+		var ed = _n0.b;
+		var _n1 = ed;
+		var school = _n1.a;
+		var schoolDates = _n1.b;
+		var schoolInfo = _n1.c;
+		return editing ? _List_fromArray(
+			[
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_fromArray(
+							[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm8]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h5,
+								_List_fromArray(
+									[
+										A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$input,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$value(school),
+												elm$html$Html$Events$onInput(
+												A2(author$project$Home$editSchool, n, ed))
+											]),
+										_List_Nil)
+									]))
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Grid$Col$textAlign(rundis$elm_bootstrap$Bootstrap$Text$alignLgRight)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$value(schoolDates),
+										elm$html$Html$Events$onInput(
+										A2(author$project$Home$editSchoolDates, n, ed))
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$value(schoolInfo),
+										elm$html$Html$Events$onInput(
+										A2(author$project$Home$editSchoolInfo, n, ed)),
+										A2(elm$html$Html$Attributes$style, 'width', '100%')
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Button$button,
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Button$small,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+								elm$html$Html$Events$onClick(author$project$Model$Save)
+							]))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Save')
+					]))
+			]) : _List_fromArray(
+			[
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_fromArray(
+							[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm8]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h5,
+								_List_fromArray(
+									[
+										A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text(school)
+									]))
+							])),
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Grid$Col$textAlign(rundis$elm_bootstrap$Bootstrap$Text$alignLgRight)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(schoolDates)
+							]))
+					])),
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(schoolInfo)
+							]))
+					])),
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Button$button,
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Button$small,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+								elm$html$Html$Events$onClick(
+								author$project$Model$EditEducation(n))
+							]))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Edit')
+					]))
+			]);
+	});
+var author$project$Model$ChangeExperience = F2(
+	function (a, b) {
+		return {$: 'ChangeExperience', a: a, b: b};
+	});
+var author$project$Home$addDuty = F2(
+	function (n, _n0) {
+		var jobTitle = _n0.a;
+		var location = _n0.b;
+		var dates = _n0.c;
+		var stuff = _n0.d;
+		return A2(
+			author$project$Model$ChangeExperience,
+			n,
+			A4(
+				author$project$Model$Experience,
+				jobTitle,
+				location,
+				dates,
+				_Utils_ap(
+					stuff,
+					_List_fromArray(
+						[
+							'Duty ' + elm$core$String$fromInt(
+							elm$core$List$length(stuff) + 1)
+						]))));
+	});
+var author$project$Home$editDates = F3(
+	function (n, _n0, str) {
+		var jobTitle = _n0.a;
+		var location = _n0.b;
+		var stuff = _n0.d;
+		return A2(
+			author$project$Model$ChangeExperience,
+			n,
+			A4(author$project$Model$Experience, jobTitle, location, str, stuff));
+	});
+var author$project$Home$editJobTitle = F3(
+	function (n, _n0, str) {
+		var location = _n0.b;
+		var dates = _n0.c;
+		var stuff = _n0.d;
+		return A2(
+			author$project$Model$ChangeExperience,
+			n,
+			A4(author$project$Model$Experience, str, location, dates, stuff));
+	});
+var author$project$Home$editLocation = F3(
+	function (n, _n0, str) {
+		var jobTitle = _n0.a;
+		var dates = _n0.c;
+		var stuff = _n0.d;
+		return A2(
+			author$project$Model$ChangeExperience,
+			n,
+			A4(author$project$Model$Experience, jobTitle, str, dates, stuff));
+	});
+var author$project$Model$EditExperience = function (a) {
+	return {$: 'EditExperience', a: a};
+};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Offset1 = {$: 'Offset1'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColOffset = function (a) {
 	return {$: 'ColOffset', a: a};
@@ -7731,29 +8173,7 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Internal$offset = F2(
 	});
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$offset, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Offset1);
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col7 = {$: 'Col7'};
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth = function (a) {
-	return {$: 'ColWidth', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$width = F2(
-	function (size, count) {
-		return rundis$elm_bootstrap$Bootstrap$Grid$Internal$ColWidth(
-			A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$Width, size, count));
-	});
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm7 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col7);
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8 = {$: 'Col8'};
-var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm8 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col8);
-var rundis$elm_bootstrap$Bootstrap$Grid$Internal$TextAlign = function (a) {
-	return {$: 'TextAlign', a: a};
-};
-var rundis$elm_bootstrap$Bootstrap$Grid$Col$textAlign = function (align) {
-	return rundis$elm_bootstrap$Bootstrap$Grid$Internal$TextAlign(align);
-};
-var rundis$elm_bootstrap$Bootstrap$Internal$Text$Right = {$: 'Right'};
-var rundis$elm_bootstrap$Bootstrap$General$Internal$LG = {$: 'LG'};
-var rundis$elm_bootstrap$Bootstrap$Text$alignLg = function (dir) {
-	return {dir: dir, size: rundis$elm_bootstrap$Bootstrap$General$Internal$LG};
-};
-var rundis$elm_bootstrap$Bootstrap$Text$alignLgRight = rundis$elm_bootstrap$Bootstrap$Text$alignLg(rundis$elm_bootstrap$Bootstrap$Internal$Text$Right);
 var author$project$Home$experience = F3(
 	function (editing, editable, _n0) {
 		var n = _n0.a;
@@ -7832,16 +8252,6 @@ var author$project$Home$experience = F3(
 										]),
 									_List_Nil)
 								]))
-						])),
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Events$onClick(author$project$Model$SaveExperience)
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Save')
 						]))
 				]),
 			_Utils_ap(
@@ -7871,20 +8281,46 @@ var author$project$Home$experience = F3(
 								]));
 					},
 					stuff),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$button,
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(
-								A2(author$project$Home$addDuty, n, exp))
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('New Duty')
-							]))
-					]))) : _Utils_ap(
+				_Utils_ap(
+					_List_fromArray(
+						[
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Button$button,
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Button$small,
+									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+											elm$html$Html$Events$onClick(
+											A2(author$project$Home$addDuty, n, exp))
+										]))
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('New Duty')
+								]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Button$button,
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Button$small,
+									rundis$elm_bootstrap$Bootstrap$Button$attrs(
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+											elm$html$Html$Events$onClick(author$project$Model$Save)
+										]))
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Save')
+								]))
+						])))) : _Utils_ap(
 			_List_fromArray(
 				[
 					A2(
@@ -7926,38 +8362,130 @@ var author$project$Home$experience = F3(
 								[
 									elm$html$Html$text(dates)
 								]))
-						])),
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Events$onClick(
-							author$project$Model$EditExperience(n))
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Edit')
 						]))
 				]),
-			A2(
-				elm$core$List$map,
-				function (oneStuff) {
-					return A2(
-						rundis$elm_bootstrap$Bootstrap$Grid$row,
+			_Utils_ap(
+				A2(
+					elm$core$List$map,
+					function (oneStuff) {
+						return A2(
+							rundis$elm_bootstrap$Bootstrap$Grid$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Grid$col,
+									_List_fromArray(
+										[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
+									_List_fromArray(
+										[
+											elm$html$Html$text(oneStuff)
+										]))
+								]));
+					},
+					stuff),
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Button$button,
+						_List_fromArray(
+							[
+								rundis$elm_bootstrap$Bootstrap$Button$small,
+								rundis$elm_bootstrap$Bootstrap$Button$attrs(
+								_List_fromArray(
+									[
+										A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+										elm$html$Html$Events$onClick(
+										author$project$Model$EditExperience(n))
+									]))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Edit')
+							]))
+					])));
+	});
+var author$project$Model$ChangeInfo = function (a) {
+	return {$: 'ChangeInfo', a: a};
+};
+var author$project$Home$editInfo = F2(
+	function (_n0, str) {
+		return author$project$Model$ChangeInfo(
+			author$project$Model$Info(str));
+	});
+var elm$html$Html$h4 = _VirtualDom_node('h4');
+var author$project$Home$info = F3(
+	function (editing, editable, i) {
+		var _n0 = i;
+		var str = _n0.a;
+		return editing ? _List_fromArray(
+			[
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
 						_List_Nil,
 						_List_fromArray(
 							[
 								A2(
-								rundis$elm_bootstrap$Bootstrap$Grid$col,
-								_List_fromArray(
-									[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
+								elm$html$Html$h4,
+								_List_Nil,
 								_List_fromArray(
 									[
-										elm$html$Html$text(oneStuff)
+										A2(
+										elm$html$Html$input,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$value(str),
+												elm$html$Html$Events$onInput(
+												author$project$Home$editInfo(i)),
+												A2(elm$html$Html$Attributes$style, 'width', '100%')
+											]),
+										_List_Nil)
 									]))
-							]));
-				},
-				stuff));
+							]))
+					])),
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Button$button,
+				_List_fromArray(
+					[
+						rundis$elm_bootstrap$Bootstrap$Button$small,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+								elm$html$Html$Events$onClick(author$project$Model$Save)
+							]))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Save')
+					]))
+			]) : _List_fromArray(
+			[
+				A2(
+				rundis$elm_bootstrap$Bootstrap$Grid$row,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						rundis$elm_bootstrap$Bootstrap$Grid$col,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h4,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text(str)
+									]))
+							]))
+					]))
+			]);
 	});
 var author$project$Model$ChangeLanguage = F2(
 	function (a, b) {
@@ -7989,7 +8517,6 @@ var author$project$Home$editLang = F3(
 var author$project$Model$EditLanguage = function (a) {
 	return {$: 'EditLanguage', a: a};
 };
-var author$project$Model$SaveLanguage = {$: 'SaveLanguage'};
 var elm$core$String$fromFloat = _String_fromNumber;
 var rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col3 = {$: 'Col3'};
 var rundis$elm_bootstrap$Bootstrap$Grid$Col$sm3 = A2(rundis$elm_bootstrap$Bootstrap$Grid$Internal$width, rundis$elm_bootstrap$Bootstrap$General$Internal$SM, rundis$elm_bootstrap$Bootstrap$Grid$Internal$Col3);
@@ -8061,31 +8588,6 @@ var elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var elm$core$Tuple$second = function (_n0) {
-	var y = _n0.b;
-	return y;
-};
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
 var rundis$elm_bootstrap$Bootstrap$Progress$roleClass = function (role) {
 	return elm$html$Html$Attributes$class(
 		function () {
@@ -8246,10 +8748,16 @@ var author$project$Home$language = F3(
 							]))
 					])),
 				A2(
-				elm$html$Html$button,
+				rundis$elm_bootstrap$Bootstrap$Button$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Model$SaveLanguage)
+						rundis$elm_bootstrap$Bootstrap$Button$small,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+								elm$html$Html$Events$onClick(author$project$Model$Save)
+							]))
 					]),
 				_List_fromArray(
 					[
@@ -8295,11 +8803,17 @@ var author$project$Home$language = F3(
 							]))
 					])),
 				A2(
-				elm$html$Html$button,
+				rundis$elm_bootstrap$Bootstrap$Button$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(
-						author$project$Model$EditLanguage(n))
+						rundis$elm_bootstrap$Bootstrap$Button$small,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+								elm$html$Html$Events$onClick(
+								author$project$Model$EditLanguage(n))
+							]))
 					]),
 				_List_fromArray(
 					[
@@ -8332,13 +8846,11 @@ var author$project$Home$largeBlank = A2(
 var author$project$Model$ChangeName = function (a) {
 	return {$: 'ChangeName', a: a};
 };
-var author$project$Home$editNameString = F2(
+var author$project$Home$editName = F2(
 	function (_n0, str) {
 		return author$project$Model$ChangeName(
 			author$project$Model$Name(str));
 	});
-var author$project$Model$EditName = {$: 'EditName'};
-var author$project$Model$SaveName = {$: 'SaveName'};
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2 = elm$html$Html$Attributes$class('mb-2');
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5 = elm$html$Html$Attributes$class('mt-5');
@@ -8361,11 +8873,7 @@ var author$project$Home$name = F3(
 								A2(
 								elm$html$Html$h1,
 								_List_fromArray(
-									[
-										rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5,
-										rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2,
-										A2(elm$html$Html$Attributes$style, 'color', author$project$Home$clr1)
-									]),
+									[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5, rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2]),
 								_List_fromArray(
 									[
 										A2(
@@ -8374,17 +8882,23 @@ var author$project$Home$name = F3(
 											[
 												elm$html$Html$Attributes$value(str),
 												elm$html$Html$Events$onInput(
-												author$project$Home$editNameString(n))
+												author$project$Home$editName(n))
 											]),
 										_List_Nil)
 									]))
 							]))
 					])),
 				A2(
-				elm$html$Html$button,
+				rundis$elm_bootstrap$Bootstrap$Button$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Model$SaveName)
+						rundis$elm_bootstrap$Bootstrap$Button$small,
+						rundis$elm_bootstrap$Bootstrap$Button$attrs(
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+								elm$html$Html$Events$onClick(author$project$Model$Save)
+							]))
 					]),
 				_List_fromArray(
 					[
@@ -8415,25 +8929,38 @@ var author$project$Home$name = F3(
 										elm$html$Html$text(str)
 									]))
 							]))
-					])),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Model$EditName)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('Edit')
 					]))
 			]);
 	});
+var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3 = elm$html$Html$Attributes$class('my-3');
+var author$project$Home$smallBlank = A2(
+	rundis$elm_bootstrap$Bootstrap$Grid$row,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			rundis$elm_bootstrap$Bootstrap$Grid$col,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$h6,
+					_List_fromArray(
+						[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(' ')
+						]))
+				]))
+		]));
+var author$project$Model$AddEducation = {$: 'AddEducation'};
 var author$project$Model$AddExperience = {$: 'AddExperience'};
 var author$project$Model$AddLanguage = {$: 'AddLanguage'};
+var author$project$Model$EditInfo = {$: 'EditInfo'};
+var author$project$Model$EditName = {$: 'EditName'};
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$h2 = _VirtualDom_node('h2');
 var elm$html$Html$h3 = _VirtualDom_node('h3');
-var elm$html$Html$h4 = _VirtualDom_node('h4');
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -8441,6 +8968,104 @@ var elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring = function (a) {
+	return {$: 'Coloring', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark = {$: 'Dark'};
+var rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled = function (a) {
+	return {$: 'Roled', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$Button$dark = rundis$elm_bootstrap$Bootstrap$Internal$Button$Coloring(
+	rundis$elm_bootstrap$Bootstrap$Internal$Button$Roled(rundis$elm_bootstrap$Bootstrap$Internal$Button$Dark));
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$ButtonItem = function (a) {
+	return {$: 'ButtonItem', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$button = F2(
+	function (options, children) {
+		return rundis$elm_bootstrap$Bootstrap$ButtonGroup$ButtonItem(
+			A2(rundis$elm_bootstrap$Bootstrap$Button$button, options, children));
+	});
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$GroupItem = function (a) {
+	return {$: 'GroupItem', a: a};
+};
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$applyModifier = F2(
+	function (modifier, options) {
+		switch (modifier.$) {
+			case 'Size':
+				var size = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						size: elm$core$Maybe$Just(size)
+					});
+			case 'Vertical':
+				return _Utils_update(
+					options,
+					{vertical: true});
+			default:
+				var attrs_ = modifier.a;
+				return _Utils_update(
+					options,
+					{
+						attributes: _Utils_ap(options.attributes, attrs_)
+					});
+		}
+	});
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$defaultOptions = {attributes: _List_Nil, size: elm$core$Maybe$Nothing, vertical: false};
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$groupAttributes = F2(
+	function (toggle, modifiers) {
+		var options = A3(elm$core$List$foldl, rundis$elm_bootstrap$Bootstrap$ButtonGroup$applyModifier, rundis$elm_bootstrap$Bootstrap$ButtonGroup$defaultOptions, modifiers);
+		return _Utils_ap(
+			_List_fromArray(
+				[
+					A2(elm$html$Html$Attributes$attribute, 'role', 'group'),
+					elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('btn-group', true),
+							_Utils_Tuple2('btn-group-toggle', toggle),
+							_Utils_Tuple2('btn-group-vertical', options.vertical)
+						])),
+					A2(elm$html$Html$Attributes$attribute, 'data-toggle', 'buttons')
+				]),
+			_Utils_ap(
+				function () {
+					var _n0 = A2(elm$core$Maybe$andThen, rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption, options.size);
+					if (_n0.$ === 'Just') {
+						var s = _n0.a;
+						return _List_fromArray(
+							[
+								elm$html$Html$Attributes$class('btn-group-' + s)
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}(),
+				options.attributes));
+	});
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$buttonGroupItem = F2(
+	function (options, items) {
+		return rundis$elm_bootstrap$Bootstrap$ButtonGroup$GroupItem(
+			A2(
+				elm$html$Html$div,
+				A2(rundis$elm_bootstrap$Bootstrap$ButtonGroup$groupAttributes, false, options),
+				A2(
+					elm$core$List$map,
+					function (_n0) {
+						var elem = _n0.a;
+						return elem;
+					},
+					items)));
+	});
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$renderGroup = function (_n0) {
+	var elem = _n0.a;
+	return elem;
+};
+var rundis$elm_bootstrap$Bootstrap$ButtonGroup$buttonGroup = F2(
+	function (options, items) {
+		return rundis$elm_bootstrap$Bootstrap$ButtonGroup$renderGroup(
+			A2(rundis$elm_bootstrap$Bootstrap$ButtonGroup$buttonGroupItem, options, items));
+	});
 var rundis$elm_bootstrap$Bootstrap$Card$Config = function (a) {
 	return {$: 'Config', a: a};
 };
@@ -8785,7 +9410,6 @@ var rundis$elm_bootstrap$Bootstrap$Grid$Row$attrs = function (attrs_) {
 	return rundis$elm_bootstrap$Bootstrap$Grid$Internal$RowAttrs(attrs_);
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3 = elm$html$Html$Attributes$class('mt-3');
-var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3 = elm$html$Html$Attributes$class('my-3');
 var author$project$Home$page = function (model) {
 	return _Utils_ap(
 		function (n) {
@@ -8797,250 +9421,322 @@ var author$project$Home$page = function (model) {
 		}(model.name),
 		_Utils_ap(
 			_List_fromArray(
-				[
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Grid$row,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Grid$col,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$h4,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Additional information')
-										]))
-								])),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Grid$col,
-							_List_fromArray(
-								[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm4]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$h3,
-									_List_fromArray(
-										[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3]),
-									_List_fromArray(
-										[
-											elm$html$Html$text(' ')
-										])),
-									rundis$elm_bootstrap$Bootstrap$Card$view(
-									A3(
-										rundis$elm_bootstrap$Bootstrap$Card$block,
-										_List_Nil,
-										_List_fromArray(
-											[
-												A2(
-												rundis$elm_bootstrap$Bootstrap$Card$Block$titleH3,
-												_List_fromArray(
-													[
-														A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
-													]),
-												_List_fromArray(
-													[
-														elm$html$Html$text('Contact')
-													])),
-												A2(
-												rundis$elm_bootstrap$Bootstrap$Card$Block$text,
-												_List_Nil,
-												_List_fromArray(
-													[
-														elm$html$Html$text('Email: '),
-														A2(
-														elm$html$Html$a,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$target('_blank'),
-																elm$html$Html$Attributes$href('mailto:myemail@gmail.com')
-															]),
-														_List_fromArray(
-															[
-																elm$html$Html$text('myemail@gmail.com')
-															]))
-													]))
-											]),
-										rundis$elm_bootstrap$Bootstrap$Card$config(_List_Nil)))
-								]))
-						])),
-					A2(
-					rundis$elm_bootstrap$Bootstrap$Grid$row,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Grid$Row$attrs(
-							_List_fromArray(
-								[
-									A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$clr2)
-								]))
-						]),
-					_List_fromArray(
-						[
-							A2(rundis$elm_bootstrap$Bootstrap$Grid$col, _List_Nil, _List_Nil)
-						])),
-					A2(
-					elm$html$Html$h2,
-					_List_fromArray(
-						[
-							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5,
-							rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2,
-							A2(elm$html$Html$Attributes$style, 'color', author$project$Home$clr1)
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Experience')
-						]))
-				]),
+				[author$project$Home$smallBlank]),
 			_Utils_ap(
-				elm$core$List$concat(
-					A2(
-						elm$core$List$map,
-						function (_n0) {
-							var n = _n0.a;
-							var exp = _n0.b;
-							return A3(
-								author$project$Home$experience,
-								_Utils_eq(
-									model.editingMode,
-									author$project$Model$EditingExperience(n)),
-								true,
-								_Utils_Tuple2(n, exp));
-						},
-						elm$core$Dict$toList(model.experience))),
+				function (i) {
+					return A3(
+						author$project$Home$info,
+						_Utils_eq(model.editingMode, author$project$Model$EditingInfo),
+						true,
+						i);
+				}(model.info),
 				_Utils_ap(
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$button,
+							rundis$elm_bootstrap$Bootstrap$Grid$row,
+							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$Events$onClick(author$project$Model$AddExperience)
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Grid$col,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											rundis$elm_bootstrap$Bootstrap$ButtonGroup$buttonGroup,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2(
+													rundis$elm_bootstrap$Bootstrap$ButtonGroup$button,
+													_List_fromArray(
+														[
+															rundis$elm_bootstrap$Bootstrap$Button$small,
+															rundis$elm_bootstrap$Bootstrap$Button$attrs(
+															_List_fromArray(
+																[
+																	A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+																	elm$html$Html$Events$onClick(author$project$Model$EditName)
+																]))
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text('Edit Name')
+														])),
+													A2(
+													rundis$elm_bootstrap$Bootstrap$ButtonGroup$button,
+													_List_fromArray(
+														[
+															rundis$elm_bootstrap$Bootstrap$Button$small,
+															rundis$elm_bootstrap$Bootstrap$Button$attrs(
+															_List_fromArray(
+																[
+																	A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$buttonClr),
+																	elm$html$Html$Events$onClick(author$project$Model$EditInfo)
+																]))
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text('Edit Info')
+														]))
+												]))
+										]))
+								])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Grid$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									rundis$elm_bootstrap$Bootstrap$Grid$col,
+									_List_fromArray(
+										[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm4]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$h3,
+											_List_fromArray(
+												[rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my3]),
+											_List_fromArray(
+												[
+													elm$html$Html$text(' ')
+												])),
+											rundis$elm_bootstrap$Bootstrap$Card$view(
+											A3(
+												rundis$elm_bootstrap$Bootstrap$Card$block,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														rundis$elm_bootstrap$Bootstrap$Card$Block$titleH3,
+														_List_fromArray(
+															[
+																A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
+															]),
+														_List_fromArray(
+															[
+																elm$html$Html$text('Contact')
+															])),
+														A2(
+														rundis$elm_bootstrap$Bootstrap$Card$Block$text,
+														_List_Nil,
+														_List_fromArray(
+															[
+																elm$html$Html$text('Email: '),
+																A2(
+																elm$html$Html$a,
+																_List_fromArray(
+																	[
+																		elm$html$Html$Attributes$target('_blank'),
+																		elm$html$Html$Attributes$href('mailto:myemail@gmail.com')
+																	]),
+																_List_fromArray(
+																	[
+																		elm$html$Html$text('myemail@gmail.com')
+																	]))
+															]))
+													]),
+												rundis$elm_bootstrap$Bootstrap$Card$config(_List_Nil)))
+										]))
+								])),
+							A2(
+							rundis$elm_bootstrap$Bootstrap$Grid$row,
+							_List_fromArray(
+								[
+									rundis$elm_bootstrap$Bootstrap$Grid$Row$attrs(
+									_List_fromArray(
+										[
+											A2(elm$html$Html$Attributes$style, 'background-color', author$project$Home$clr2)
+										]))
 								]),
 							_List_fromArray(
 								[
-									elm$html$Html$text('New...')
+									A2(rundis$elm_bootstrap$Bootstrap$Grid$col, _List_Nil, _List_Nil)
 								])),
-							author$project$Home$largeBlank,
 							A2(
 							elm$html$Html$h2,
 							_List_fromArray(
 								[
-									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3,
+									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt5,
 									rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2,
 									A2(elm$html$Html$Attributes$style, 'color', author$project$Home$clr1)
 								]),
 							_List_fromArray(
 								[
-									elm$html$Html$text('Education')
-								])),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Grid$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									rundis$elm_bootstrap$Bootstrap$Grid$col,
-									_List_fromArray(
-										[rundis$elm_bootstrap$Bootstrap$Grid$Col$sm8]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$a,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$target('_blank'),
-													elm$html$Html$Attributes$href('https://www.google.ca/')
-												]),
-											_List_fromArray(
-												[
-													A2(
-													elm$html$Html$h5,
-													_List_fromArray(
-														[
-															A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
-														]),
-													_List_fromArray(
-														[
-															elm$html$Html$text('School Name with link')
-														]))
-												]))
-										])),
-									A2(
-									rundis$elm_bootstrap$Bootstrap$Grid$col,
-									_List_fromArray(
-										[
-											rundis$elm_bootstrap$Bootstrap$Grid$Col$textAlign(rundis$elm_bootstrap$Bootstrap$Text$alignLgRight)
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text('StartYear - EndYear')
-										]))
-								])),
-							A2(
-							rundis$elm_bootstrap$Bootstrap$Grid$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									rundis$elm_bootstrap$Bootstrap$Grid$col,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Extracurriculars')
-										]))
+									elm$html$Html$text('Experience')
 								]))
 						]),
 					_Utils_ap(
-						_List_fromArray(
-							[
-								author$project$Home$largeBlank,
-								A2(
-								elm$html$Html$h2,
-								_List_fromArray(
-									[
-										rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3,
-										rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2,
-										A2(elm$html$Html$Attributes$style, 'color', author$project$Home$clr1)
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Languages')
-									]))
-							]),
+						elm$core$List$concat(
+							A2(
+								elm$core$List$map,
+								function (_n0) {
+									var n = _n0.a;
+									var exp = _n0.b;
+									return A3(
+										author$project$Home$experience,
+										_Utils_eq(
+											model.editingMode,
+											author$project$Model$EditingExperience(n)),
+										true,
+										_Utils_Tuple2(n, exp));
+								},
+								elm$core$Dict$toList(model.experience))),
 						_Utils_ap(
-							elm$core$List$concat(
-								A2(
-									elm$core$List$map,
-									function (_n1) {
-										var n = _n1.a;
-										var langu = _n1.b;
-										return A3(
-											author$project$Home$language,
-											_Utils_eq(
-												model.editingMode,
-												author$project$Model$EditingLanguage(n)),
-											true,
-											_Utils_Tuple2(n, langu));
-									},
-									elm$core$Dict$toList(model.languages))),
 							_List_fromArray(
 								[
 									A2(
-									elm$html$Html$button,
+									rundis$elm_bootstrap$Bootstrap$Grid$row,
+									_List_Nil,
 									_List_fromArray(
 										[
-											elm$html$Html$Events$onClick(author$project$Model$AddLanguage)
+											A2(
+											rundis$elm_bootstrap$Bootstrap$Grid$col,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2(
+													rundis$elm_bootstrap$Bootstrap$Button$button,
+													_List_fromArray(
+														[
+															rundis$elm_bootstrap$Bootstrap$Button$dark,
+															rundis$elm_bootstrap$Bootstrap$Button$small,
+															rundis$elm_bootstrap$Bootstrap$Button$attrs(
+															_List_fromArray(
+																[
+																	elm$html$Html$Events$onClick(author$project$Model$AddExperience)
+																]))
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text('New')
+														]))
+												]))
+										])),
+									author$project$Home$largeBlank,
+									A2(
+									elm$html$Html$h2,
+									_List_fromArray(
+										[
+											rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3,
+											rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2,
+											A2(elm$html$Html$Attributes$style, 'color', author$project$Home$clr1)
 										]),
 									_List_fromArray(
 										[
-											elm$html$Html$text('New...')
-										])),
-									author$project$Home$largeBlank
-								])))))));
+											elm$html$Html$text('Education')
+										]))
+								]),
+							_Utils_ap(
+								elm$core$List$concat(
+									A2(
+										elm$core$List$map,
+										function (_n1) {
+											var n = _n1.a;
+											var ed = _n1.b;
+											return A3(
+												author$project$Home$education,
+												_Utils_eq(
+													model.editingMode,
+													author$project$Model$EditingEducation(n)),
+												true,
+												_Utils_Tuple2(n, ed));
+										},
+										elm$core$Dict$toList(model.education))),
+								_Utils_ap(
+									_List_fromArray(
+										[
+											A2(
+											rundis$elm_bootstrap$Bootstrap$Grid$row,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2(
+													rundis$elm_bootstrap$Bootstrap$Grid$col,
+													_List_Nil,
+													_List_fromArray(
+														[
+															A2(
+															rundis$elm_bootstrap$Bootstrap$Button$button,
+															_List_fromArray(
+																[
+																	rundis$elm_bootstrap$Bootstrap$Button$dark,
+																	rundis$elm_bootstrap$Bootstrap$Button$small,
+																	rundis$elm_bootstrap$Bootstrap$Button$attrs(
+																	_List_fromArray(
+																		[
+																			elm$html$Html$Events$onClick(author$project$Model$AddEducation)
+																		]))
+																]),
+															_List_fromArray(
+																[
+																	elm$html$Html$text('New')
+																]))
+														]))
+												])),
+											author$project$Home$largeBlank,
+											A2(
+											elm$html$Html$h2,
+											_List_fromArray(
+												[
+													rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mt3,
+													rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$mb2,
+													A2(elm$html$Html$Attributes$style, 'color', author$project$Home$clr1)
+												]),
+											_List_fromArray(
+												[
+													elm$html$Html$text('Languages')
+												]))
+										]),
+									_Utils_ap(
+										elm$core$List$concat(
+											A2(
+												elm$core$List$map,
+												function (_n2) {
+													var n = _n2.a;
+													var langu = _n2.b;
+													return A3(
+														author$project$Home$language,
+														_Utils_eq(
+															model.editingMode,
+															author$project$Model$EditingLanguage(n)),
+														true,
+														_Utils_Tuple2(n, langu));
+												},
+												elm$core$Dict$toList(model.languages))),
+										_List_fromArray(
+											[
+												A2(
+												rundis$elm_bootstrap$Bootstrap$Grid$row,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														rundis$elm_bootstrap$Bootstrap$Grid$col,
+														_List_Nil,
+														_List_fromArray(
+															[
+																A2(
+																rundis$elm_bootstrap$Bootstrap$Button$button,
+																_List_fromArray(
+																	[
+																		rundis$elm_bootstrap$Bootstrap$Button$dark,
+																		rundis$elm_bootstrap$Bootstrap$Button$small,
+																		rundis$elm_bootstrap$Bootstrap$Button$attrs(
+																		_List_fromArray(
+																			[
+																				elm$html$Html$Events$onClick(author$project$Model$AddLanguage)
+																			]))
+																	]),
+																_List_fromArray(
+																	[
+																		elm$html$Html$text('New')
+																	]))
+															]))
+													])),
+												author$project$Home$largeBlank
+											]))))))))));
 };
 var rundis$elm_bootstrap$Bootstrap$Utilities$Spacing$my4 = elm$html$Html$Attributes$class('my-4');
 var author$project$Main$pageNotFound = _List_fromArray(

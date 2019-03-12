@@ -48,7 +48,9 @@ init flags url key =
                           , navState = navState
                           , page = Home
                           , name = Name "Name"
+                          , info = Info "Additional information"
                           , experience = Dict.fromList [(0,Experience "Job Title" "Location" "Date" ["Duty 1", "Duty 2"])]
+                          , education = Dict.fromList [(0,Education "School" "Date" "Additional information")]
                           , languages = Dict.fromList [(0,Language "Language" 100)]
                           , editingMode = EditingExperience 1
                           }
@@ -85,14 +87,20 @@ update msg model =
 
         NoOp -> (model, Cmd.none)
 
+        Save ->
+            ({ model | editingMode = NotEditing}, Cmd.none)
+
         EditName ->
             ({ model | editingMode = EditingName }, Cmd.none)
 
-        SaveName ->
-            ({ model | editingMode = NotEditing}, Cmd.none)
+        ChangeName n ->
+            ({ model | name = n }, Cmd.none)
 
-        ChangeName string ->
-            ({ model | name = model.name }, Cmd.none)
+        EditInfo ->
+            ({ model | editingMode = EditingInfo }, Cmd.none)
+
+        ChangeInfo i ->
+            ({ model | info = i }, Cmd.none)
 
         AddExperience ->
             ( { model | experience = Dict.insert
@@ -106,11 +114,23 @@ update msg model =
         EditExperience n ->
             ({ model | editingMode = EditingExperience n }, Cmd.none)
 
-        SaveExperience ->
-            ({ model | editingMode = NotEditing}, Cmd.none)
-
         ChangeExperience n exp ->
             ({ model | experience = Dict.insert n exp model.experience }, Cmd.none)
+
+        AddEducation ->
+            ( { model | education = Dict.insert
+                                        (Dict.size model.education)
+                                        (Education "School" "Dates" "Additional information")
+                                        model.education
+                 }
+            , Cmd.none
+            )
+
+        EditEducation n ->
+            ({ model | editingMode = EditingEducation n }, Cmd.none)
+
+        ChangeEducation n ed ->
+            ({ model | education = Dict.insert n ed model.education }, Cmd.none)
 
         AddLanguage ->
             ( { model | languages = Dict.insert
@@ -123,9 +143,6 @@ update msg model =
 
         EditLanguage n ->
             ({ model | editingMode = EditingLanguage n }, Cmd.none)
-
-        SaveLanguage ->
-            ({ model | editingMode = NotEditing}, Cmd.none)
 
         ChangeLanguage n lang ->
             ({ model | languages = Dict.insert n lang model.languages }, Cmd.none)

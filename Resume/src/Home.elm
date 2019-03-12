@@ -2,8 +2,7 @@ module Home exposing (page)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
---import Html.Events exposing (onClick,onInput)
-import Html.Events exposing (..)
+import Html.Events exposing (onClick,onInput)
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
@@ -26,6 +25,17 @@ clr1 = "rgb(25,85,140)"
 clr2 : String
 clr2 = "rgb(175,200,225)"
 
+buttonClr : String
+buttonClr = "rgb(20,130,175)"
+
+editName : Name -> String -> Msg
+editName (Name _) str =
+    ChangeName <| Name str
+
+editInfo : Info -> String -> Msg
+editInfo (Info _) str =
+    ChangeInfo <| Info str
+
 editJobTitle : Int -> Experience -> String -> Msg
 editJobTitle n (Experience _ location dates stuff) str =
     ChangeExperience n <| Experience str location dates stuff
@@ -42,6 +52,18 @@ addDuty : Int -> Experience -> Msg
 addDuty n (Experience jobTitle location dates stuff) =
     ChangeExperience n <| Experience jobTitle location dates (stuff ++ ["Duty " ++ String.fromInt (List.length stuff + 1)])
 
+editSchool : Int -> Education -> String -> Msg
+editSchool n (Education _ schoolDates schoolInfo) str =
+    ChangeEducation n <| Education str schoolDates schoolInfo
+
+editSchoolDates : Int -> Education -> String -> Msg
+editSchoolDates n (Education school _ schoolInfo) str =
+    ChangeEducation n <| Education school str schoolInfo
+
+editSchoolInfo : Int -> Education -> String -> Msg
+editSchoolInfo n (Education school schoolDates _) str =
+    ChangeEducation n <| Education school schoolDates str
+
 editLang : Int -> Language -> String -> Msg
 editLang n (Language _ fluency) str =
     ChangeLanguage n <| Language str fluency
@@ -49,10 +71,6 @@ editLang n (Language _ fluency) str =
 editFluency : Int -> Language -> String -> Msg
 editFluency n (Language lang _) str =
     ChangeLanguage n <| Language lang (Maybe.withDefault 100 (String.toFloat str))
-
-editNameString : Name -> String -> Msg
-editNameString (Name _) str =
-    ChangeName <| Name str
 
 name : Bool -> Bool -> Name -> List (Html Msg)
 name editing editable n =
@@ -62,10 +80,10 @@ name editing editable n =
   if editing then
     [Grid.row []
         [ Grid.col []
-            [ h1 [Spacing.mt5, Spacing.mb2, style "color" clr1] [ input [value str, onInput (editNameString n)] [] ]
+            [ h1 [Spacing.mt5, Spacing.mb2] [ input [value str, onInput (editName n)] [] ]
             ]
         ]
-      , button [onClick SaveName] [text "Save"]
+      , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
       ]
   else
     [Grid.row []
@@ -73,9 +91,28 @@ name editing editable n =
             [ h1 [Spacing.mt5, Spacing.mb2, style "color" clr1] [ text str ]
             ]
         ]
-        , button [onClick (EditName)] [text "Edit"]
       ]
 
+info : Bool -> Bool -> Info -> List (Html Msg)
+info editing editable i =
+  let
+    (Info str) = i
+  in
+  if editing then
+    [ Grid.row []
+        [ Grid.col []
+            [ h4 [][ input [value str, onInput (editInfo i), style "width" "100%"] [] ]
+            ]
+        ]
+    , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
+    ]
+  else
+    [ Grid.row []
+        [ Grid.col []
+            [ h4 [][ text str ]
+            ]
+        ]
+    ]
 
 experience : Bool -> Bool -> (Int, Experience) -> List (Html Msg)
 experience editing editable (n, exp) =
@@ -94,7 +131,6 @@ experience editing editable (n, exp) =
             [ input [value dates, onInput (editDates n exp), style "width" "100%"] []
             ]
         ]
-        , button [onClick SaveExperience] [text "Save"]
     ] ++
     ( List.map (\ oneStuff -> Grid.row []
         [ Grid.col [Col.offsetSm1]
@@ -104,7 +140,9 @@ experience editing editable (n, exp) =
                )
         stuff
     ) ++
-      [button [onClick (addDuty n exp)] [text "New Duty"]]
+      [Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (addDuty n exp)]] [text "New Duty"]]
+    ++
+      [Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]]
   else
     [ Grid.row []
         [ Grid.col [Col.sm8]
@@ -118,7 +156,6 @@ experience editing editable (n, exp) =
             ]
 
         ]
-        , button [onClick (EditExperience n)] [text "Edit"]
     ] ++
     ( List.map (\ oneStuff -> Grid.row []
         [ Grid.col [Col.offsetSm1]
@@ -128,6 +165,43 @@ experience editing editable (n, exp) =
                )
         stuff
     )
+    ++
+    [Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditExperience n)]] [text "Edit"]]
+
+education : Bool -> Bool -> (Int, Education) -> List (Html Msg)
+education editing editable (n, ed) =
+  let
+    (Education school schoolDates schoolInfo) = ed
+  in
+  if editing then
+    [ Grid.row []
+        [ Grid.col [Col.sm8]
+            [ h5 [ style "font-weight" "bold"][ input [value school, onInput (editSchool n ed)] []]]
+        , Grid.col [Col.textAlign Text.alignLgRight]
+            [ input [value schoolDates, onInput (editSchoolDates n ed)] []
+            ]
+        ]
+    , Grid.row []
+        [ Grid.col []
+            [input [value schoolInfo, onInput (editSchoolInfo n ed), style "width" "100%"] []]
+        ]
+    , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
+    ]
+  else
+    [ Grid.row []
+        [ Grid.col [Col.sm8]
+            [ h5 [style "font-weight" "bold"] [text school]]
+        , Grid.col [Col.textAlign Text.alignLgRight]
+            [ text schoolDates
+            ]
+        ]
+    , Grid.row []
+        [ Grid.col []
+            [text schoolInfo]
+        ]
+    , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditEducation n)]] [text "Edit"]
+    ]
+
 
 language : Bool -> Bool -> (Int, Language) -> List (Html Msg)
 language editing editable (n, langu) =
@@ -142,7 +216,7 @@ language editing editable (n, langu) =
             [ h5 [] [input [value (String.fromFloat fluency), onInput (editFluency n langu)] []]
             ]
         ]
-                , button [onClick SaveLanguage] [text "Save"]
+      , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
     ]
   else
     [ Grid.row []
@@ -152,7 +226,7 @@ language editing editable (n, langu) =
             [ Progress.progress [ Progress.attrs[style "background-color" clr2], Progress.value fluency ]
             ]
         ]
-        , button [onClick (EditLanguage n)] [text "Edit"]
+        , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditLanguage n)]] [text "Edit"]
     ]
 
 smallBlank = Grid.row [] --this is an empty row (to add blank space)
@@ -172,12 +246,21 @@ page : Model -> List (Html Msg)
 page model =
     (\n -> name (model.editingMode == EditingName) True n) model.name
     ++
+    [smallBlank]
+    ++
+    (\i -> info (model.editingMode == EditingInfo) True i) model.info
+    ++
     [ --HEADER
-    Grid.row []
+    Grid.row[]
         [ Grid.col []
-            [ h4 [][text "Additional information"]
+            [ButtonGroup.buttonGroup []
+                [ ButtonGroup.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick EditName]] [text "Edit Name"]
+                , ButtonGroup.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick EditInfo]] [text "Edit Info"]
+                ]
             ]
-        , Grid.col [Col.sm4]
+        ]
+    , Grid.row []
+        [ Grid.col [Col.sm4]
             [ h3 [Spacing.my3] [text " "]
             , Card.config []
                 |> Card.block []
@@ -198,32 +281,31 @@ page model =
     ++
     List.concat (List.map (\(n, exp) -> experience (model.editingMode == EditingExperience n) True (n, exp)) (Dict.toList model.experience))
     ++
-    [ button [onClick AddExperience] [text "New..."]
+    [ Grid.row[]
+        [Grid.col []
+            [Button.button [Button.dark, Button.small, Button.attrs[onClick AddExperience]] [text "New"]]
+        ]
     , largeBlank
     --EDUCATION
     , h2 [Spacing.mt3, Spacing.mb2, style "color" clr1] [text "Education"]
-    , Grid.row []
-        [ Grid.col [Col.sm8] --increase number after sm to make this column bigger (range 1-12)
-            [ --use 'a [target "_blank", href "link"] [text/picture]' to create a link
-            a [target "_blank", href "https://www.google.ca/"] [h5 [ style "font-weight" "bold"][ text "School Name with link"]]
-            ]
-        , Grid.col [Col.textAlign Text.alignLgRight]
-            [ text "StartYear - EndYear"
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col []
-            [ text "Extracurriculars"]
-        ]
     ]
     ++
-    [ largeBlank
+    List.concat (List.map (\(n, ed) -> education (model.editingMode == EditingEducation n) True (n, ed)) (Dict.toList model.education))
+    ++
+    [ Grid.row[]
+        [Grid.col []
+            [Button.button [Button.dark, Button.small, Button.attrs[onClick AddEducation]] [text "New"]]
+        ]
+    , largeBlank
     --LANGUAGES
     , h2 [Spacing.mt3, Spacing.mb2, style "color" clr1] [text "Languages"]
     ]
     ++
     List.concat (List.map (\(n, langu) -> language (model.editingMode == EditingLanguage n) True (n, langu)) (Dict.toList model.languages))
     ++
-    [ button [onClick AddLanguage] [text "New..."]
+    [ Grid.row[]
+        [Grid.col []
+            [Button.button [Button.dark, Button.small, Button.attrs[onClick AddLanguage]] [text "New"]]
+        ]
     , largeBlank
     ]
