@@ -47,8 +47,9 @@ init flags url key =
             urlUpdate url { navKey = key
                           , navState = navState
                           , page = Home
+                          , name = Name "Name"
                           , experience = Dict.fromList [(0,Experience "Job Title" "Location" "Date" ["Duty 1", "Duty 2"])]
-                          , languages = []
+                          , languages = Dict.fromList [(0,Language "Language" 100)]
                           , editingMode = EditingExperience 1
                           }
     in
@@ -84,10 +85,19 @@ update msg model =
 
         NoOp -> (model, Cmd.none)
 
-        AddExperience -> 
-            ( { model | experience = Dict.insert 
-                                        (Dict.size model.experience) 
-                                        (Experience "Job Title" "Location" "Dates" ["Duty 1", "Duty 2"]) 
+        EditName ->
+            ({ model | editingMode = EditingName }, Cmd.none)
+
+        SaveName ->
+            ({ model | editingMode = NotEditing}, Cmd.none)
+
+        ChangeName string ->
+            ({ model | name = model.name }, Cmd.none)
+
+        AddExperience ->
+            ( { model | experience = Dict.insert
+                                        (Dict.size model.experience)
+                                        (Experience "Job Title" "Location" "Dates" ["Duty 1", "Duty 2"])
                                         model.experience
                  }
             , Cmd.none
@@ -101,6 +111,24 @@ update msg model =
 
         ChangeExperience n exp ->
             ({ model | experience = Dict.insert n exp model.experience }, Cmd.none)
+
+        AddLanguage ->
+            ( { model | languages = Dict.insert
+                                        (Dict.size model.languages)
+                                        (Language "Language" 100)
+                                        model.languages
+                 }
+            , Cmd.none
+            )
+
+        EditLanguage n ->
+            ({ model | editingMode = EditingLanguage n }, Cmd.none)
+
+        SaveLanguage ->
+            ({ model | editingMode = NotEditing}, Cmd.none)
+
+        ChangeLanguage n lang ->
+            ({ model | languages = Dict.insert n lang model.languages }, Cmd.none)
 
 
 urlUpdate : Url -> Model -> ( Model, Cmd Msg )

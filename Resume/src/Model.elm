@@ -17,14 +17,17 @@ type alias Model =
     { navKey : Navigation.Key
     , page : Page
     , navState : Navbar.State
+    , name : Name
     , experience : Dict Int Experience
-    , languages : List Language
+    , languages : Dict Int Language
     , editingMode : EditingMode
     }
 
 type EditingMode =
       NotEditing
+    | EditingName
     | EditingExperience Int
+    | EditingLanguage Int
 
 type Page
     = Home
@@ -34,14 +37,24 @@ type Experience =
     Experience String {-jobTitle-} String {-location-} String {-dates-} (List String) {-stuff-}
 
 type Language =
-    Language String {-language-} Int {-fluency out of 100-}
+    Language String {-language-} Float {-fluency out of 100-}
+
+type Name =
+    Name String
 
 type Msg
     = UrlChange Url
     | ClickedLink UrlRequest
     | NavMsg Navbar.State
     | NoOp
+    | EditName
+    | ChangeName Name
+    | SaveName
     | AddExperience
     | EditExperience Int
     | SaveExperience
     | ChangeExperience Int Experience
+    | AddLanguage
+    | EditLanguage Int
+    | SaveLanguage
+    | ChangeLanguage Int Language
