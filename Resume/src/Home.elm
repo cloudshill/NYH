@@ -52,6 +52,10 @@ addDuty : Int -> Experience -> Msg
 addDuty n (Experience jobTitle location dates stuff) =
     ChangeExperience n <| Experience jobTitle location dates (stuff ++ ["Duty " ++ String.fromInt (List.length stuff + 1)])
 
+editDuty : Int -> Int -> Experience -> String -> Msg
+editDuty n m (Experience jobTitle location dates stuff) str =
+    ChangeExperience n <| Experience jobTitle location dates (List.take (m-1) stuff ++ [str] ++ List.drop m stuff)
+
 editSchool : Int -> Education -> String -> Msg
 editSchool n (Education _ schoolDates schoolInfo) str =
     ChangeEducation n <| Education str schoolDates schoolInfo
@@ -138,7 +142,7 @@ experience editing editable (n, exp) =
     ] ++
     ( List.map (\ oneStuff -> Grid.row []
         [ Grid.col [Col.offsetSm1]
-            [ input [value oneStuff, style "width" "100%"] []
+            [ input [value oneStuff, onInput (editDuty n 1 exp), style "width" "100%"] []
             ]
         ]
                )
