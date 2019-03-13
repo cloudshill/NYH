@@ -47,8 +47,7 @@ init flags url key =
             urlUpdate url { navKey = key
                           , navState = navState
                           , page = Home
-                          , name = Name "Name"
-                          , info = Info "Additional information"
+                          , header = Header "Name" "Additional information"
                           , experience = Dict.fromList [(0,Experience "Job Title" "Location" "Date" ["Duty 1", "Duty 2"])]
                           , education = Dict.fromList [(0,Education "School" "Date" "Additional information")]
                           , languages = Dict.fromList [(0,Language "Language" 100)]
@@ -90,17 +89,11 @@ update msg model =
         Save ->
             ({ model | editingMode = NotEditing}, Cmd.none)
 
-        EditName ->
-            ({ model | editingMode = EditingName }, Cmd.none)
+        EditHeader ->
+            ({ model | editingMode = EditingHeader }, Cmd.none)
 
-        ChangeName n ->
-            ({ model | name = n }, Cmd.none)
-
-        EditInfo ->
-            ({ model | editingMode = EditingInfo }, Cmd.none)
-
-        ChangeInfo i ->
-            ({ model | info = i }, Cmd.none)
+        ChangeHeader h ->
+            ({ model | header = h }, Cmd.none)
 
         AddExperience ->
             ( { model | experience = Dict.insert

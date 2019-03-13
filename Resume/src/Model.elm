@@ -17,8 +17,7 @@ type alias Model =
     { navKey : Navigation.Key
     , page : Page
     , navState : Navbar.State
-    , name : Name
-    , info : Info
+    , header : Header
     , experience : Dict Int Experience
     , education : Dict Int Education
     , languages : Dict Int Language
@@ -27,8 +26,7 @@ type alias Model =
 
 type EditingMode =
       NotEditing
-    | EditingName
-    | EditingInfo
+    | EditingHeader
     | EditingExperience Int
     | EditingEducation Int
     | EditingLanguage Int
@@ -37,11 +35,8 @@ type Page
     = Home
     | NotFound
 
-type Name =
-    Name String
-
-type Info =
-    Info String
+type Header =
+    Header String {-name-} String {-info-}
 
 type Experience =
     Experience String {-jobTitle-} String {-location-} String {-dates-} (List String) {-stuff-}
@@ -59,10 +54,8 @@ type Msg
     | NavMsg Navbar.State
     | NoOp
     | Save
-    | EditName
-    | ChangeName Name
-    | EditInfo
-    | ChangeInfo Info
+    | EditHeader
+    | ChangeHeader Header
     | AddExperience
     | EditExperience Int
     | ChangeExperience Int Experience

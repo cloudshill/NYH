@@ -28,13 +28,13 @@ clr2 = "rgb(175,200,225)"
 buttonClr : String
 buttonClr = "rgb(20,130,175)"
 
-editName : Name -> String -> Msg
-editName (Name _) str =
-    ChangeName <| Name str
+editName : Header -> String -> Msg
+editName (Header _ i) str =
+    ChangeHeader <| Header str i
 
-editInfo : Info -> String -> Msg
-editInfo (Info _) str =
-    ChangeInfo <| Info str
+editInfo : Header -> String -> Msg
+editInfo (Header n _) str =
+    ChangeHeader <| Header n str
 
 editJobTitle : Int -> Experience -> String -> Msg
 editJobTitle n (Experience _ location dates stuff) str =
@@ -72,47 +72,51 @@ editFluency : Int -> Language -> String -> Msg
 editFluency n (Language lang _) str =
     ChangeLanguage n <| Language lang (Maybe.withDefault 100 (String.toFloat str))
 
-name : Bool -> Bool -> Name -> List (Html Msg)
-name editing editable n =
+header : Bool -> Bool -> Header -> List (Html Msg)
+header editing editable h =
   let
-    (Name str) = n
-  in
-  if editing then
-    [Grid.row []
-        [ Grid.col []
-            [ h1 [Spacing.mt5, Spacing.mb2] [ input [value str, onInput (editName n)] [] ]
-            ]
-        ]
-      , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
-      ]
-  else
-    [Grid.row []
-        [ Grid.col []
-            [ h1 [Spacing.mt5, Spacing.mb2, style "color" clr1] [ text str ]
-            ]
-        ]
-      ]
-
-info : Bool -> Bool -> Info -> List (Html Msg)
-info editing editable i =
-  let
-    (Info str) = i
+    (Header name info) = h
   in
   if editing then
     [ Grid.row []
-        [ Grid.col []
-            [ h4 [][ input [value str, onInput (editInfo i), style "width" "100%"] [] ]
+        [ Grid.col [Col.sm8]
+            [ h1 [Spacing.mt5, Spacing.mb2] [ input [value name, onInput (editName h)] [] ]
+            , h4 [][ input [value info, onInput (editInfo h), style "width" "100%"] [] ]
+            ]
+        , Grid.col [Col.textAlign Text.alignLgRight]
+            [ h3 [Spacing.my3] [text " "]
+            , Card.config []
+                |> Card.block []
+                    [ Block.titleH3 [style "font-weight" "bold"] [ text "Contact" ]
+                    , Block.text [] [ text "Email: ", a [target "_blank", href "mailto:myemail@gmail.com"] [text "myemail@gmail.com"]]
+                    ]
+                |> Card.view
             ]
         ]
+    , smallBlank
     , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
     ]
   else
     [ Grid.row []
-        [ Grid.col []
-            [ h4 [][ text str ]
+        [ Grid.col [Col.sm8]
+            [ h1 [Spacing.mt5, Spacing.mb2, style "color" clr1] [ text name ]
+            , h4 [][ text info ]
+            ]
+        , Grid.col [Col.textAlign Text.alignLgRight]
+            [ h3 [Spacing.my3] [text " "]
+            , Card.config []
+                |> Card.block []
+                    [ Block.titleH3 [style "font-weight" "bold"] [ text "Contact" ]
+                    , Block.text [] [ text "Email: ", a [target "_blank", href "mailto:myemail@gmail.com"] [text "myemail@gmail.com"]]
+                    ]
+                |> Card.view
             ]
         ]
+    , smallBlank
+    , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick EditHeader]] [text "Edit"]
     ]
+
+
 
 experience : Bool -> Bool -> (Int, Experience) -> List (Html Msg)
 experience editing editable (n, exp) =
@@ -140,7 +144,8 @@ experience editing editable (n, exp) =
                )
         stuff
     ) ++
-      [Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (addDuty n exp)]] [text "New Duty"]]
+      [smallBlank
+      , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (addDuty n exp)]] [text "New Duty"]]
     ++
       [Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]]
   else
@@ -166,7 +171,8 @@ experience editing editable (n, exp) =
         stuff
     )
     ++
-    [Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditExperience n)]] [text "Edit"]]
+    [smallBlank
+    , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditExperience n)]] [text "Edit"]]
 
 education : Bool -> Bool -> (Int, Education) -> List (Html Msg)
 education editing editable (n, ed) =
@@ -185,6 +191,7 @@ education editing editable (n, ed) =
         [ Grid.col []
             [input [value schoolInfo, onInput (editSchoolInfo n ed), style "width" "100%"] []]
         ]
+    , smallBlank
     , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
     ]
   else
@@ -199,6 +206,7 @@ education editing editable (n, ed) =
         [ Grid.col []
             [text schoolInfo]
         ]
+    , smallBlank
     , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditEducation n)]] [text "Edit"]
     ]
 
@@ -216,6 +224,7 @@ language editing editable (n, langu) =
             [ h5 [] [input [value (String.fromFloat fluency), onInput (editFluency n langu)] []]
             ]
         ]
+      , smallBlank
       , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick Save]] [text "Save"]
     ]
   else
@@ -226,6 +235,7 @@ language editing editable (n, langu) =
             [ Progress.progress [ Progress.attrs[style "background-color" clr2], Progress.value fluency ]
             ]
         ]
+        , smallBlank
         , Button.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick (EditLanguage n)]] [text "Edit"]
     ]
 
@@ -244,32 +254,10 @@ largeBlank = Grid.row [] --this is an empty row (to add blank space)
 
 page : Model -> List (Html Msg)
 page model =
-    (\n -> name (model.editingMode == EditingName) True n) model.name
-    ++
-    [smallBlank]
-    ++
-    (\i -> info (model.editingMode == EditingInfo) True i) model.info
+    (\h -> header (model.editingMode == EditingHeader) True h) model.header
     ++
     [ --HEADER
-    Grid.row[]
-        [ Grid.col []
-            [ButtonGroup.buttonGroup []
-                [ ButtonGroup.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick EditName]] [text "Edit Name"]
-                , ButtonGroup.button [Button.small, Button.attrs[style "background-color" buttonClr, onClick EditInfo]] [text "Edit Info"]
-                ]
-            ]
-        ]
-    , Grid.row []
-        [ Grid.col [Col.sm4]
-            [ h3 [Spacing.my3] [text " "]
-            , Card.config []
-                |> Card.block []
-                    [ Block.titleH3 [style "font-weight" "bold"] [ text "Contact" ]
-                    , Block.text [] [ text "Email: ", a [target "_blank", href "mailto:myemail@gmail.com"] [text "myemail@gmail.com"]]
-                    ]
-                |> Card.view
-            ]
-        ]
+    smallBlank
     , Grid.row [Row.attrs [ style "background-color" clr2 ]] --draws a line (empty row with rgb colour - you can also use colour names from link above)
            [ Grid.col []
                [
