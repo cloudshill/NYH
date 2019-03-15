@@ -8304,11 +8304,11 @@ var author$project$Home$editDuty = F4(
 				location,
 				dates,
 				_Utils_ap(
-					A2(elm$core$List$take, m - 1, stuff),
+					A2(elm$core$List$take, m, stuff),
 					_Utils_ap(
 						_List_fromArray(
 							[str]),
-						A2(elm$core$List$drop, m, stuff)))));
+						A2(elm$core$List$drop, m + 1, stuff)))));
 	});
 var author$project$Home$editJobTitle = F3(
 	function (n, _n0, str) {
@@ -8431,32 +8431,33 @@ var author$project$Home$experience = F3(
 				]),
 			_Utils_ap(
 				A2(
-					elm$core$List$map,
-					function (oneStuff) {
-						return A2(
-							rundis$elm_bootstrap$Bootstrap$Grid$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									rundis$elm_bootstrap$Bootstrap$Grid$col,
-									_List_fromArray(
-										[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$input,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$value(oneStuff),
-													elm$html$Html$Events$onInput(
-													A3(author$project$Home$editDuty, n, 1, exp)),
-													A2(elm$html$Html$Attributes$style, 'width', '100%')
-												]),
-											_List_Nil)
-										]))
-								]));
-					},
+					elm$core$List$indexedMap,
+					F2(
+						function (idx, oneStuff) {
+							return A2(
+								rundis$elm_bootstrap$Bootstrap$Grid$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										rundis$elm_bootstrap$Bootstrap$Grid$col,
+										_List_fromArray(
+											[rundis$elm_bootstrap$Bootstrap$Grid$Col$offsetSm1]),
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$input,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$value(oneStuff),
+														elm$html$Html$Events$onInput(
+														A3(author$project$Home$editDuty, n, idx, exp)),
+														A2(elm$html$Html$Attributes$style, 'width', '100%')
+													]),
+												_List_Nil)
+											]))
+									]));
+						}),
 					stuff),
 				_Utils_ap(
 					_List_fromArray(
